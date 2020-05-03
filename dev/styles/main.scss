@@ -1,0 +1,46 @@
+$blue: #109cff;
+$red: #ff6d6d;
+$orange: #ffb46f;
+$black: #333333;
+$gray: #aaaaaa;
+$link: rgb(73, 152, 209);
+
+
+@font-face {
+	font-family: 'Source Han Sans';
+	font-style: normal;
+	font-weight: 500;
+	src: url('/fonts/sanserif/SourceHanSans-Medium.eot');
+	src: url('/fonts/sanserif/SourceHanSans-Medium.eot?#iefix') format('embedded-opentype'),
+		url('/fonts/sanserif/SourceHanSans-Medium.woff') format('woff'),
+		url('/fonts/sanserif/SourceHanSans-Medium.ttf') format('truetype');
+}
+
+html,
+body {
+	font-family: 'Source Han Sans', 'Roboto', sans-serif;
+	font-weight: 500;
+	font-weight: 16px;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+}
+canvas {
+	display: block;
+}
+
+#container {
+	// display: none;
+}
+
+.state_active {
+	display: block;
+}
+
+@import "util";
+
+@import 'simulation';
+@import 'loader';
+@import 'navigation';
+@import 'top';
+@import 'rule';

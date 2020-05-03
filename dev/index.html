@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width" />
+		<title>ts-parcel-as-lib-builder</title>
+		<link rel="stylesheet" href="./styles/reset.scss" />
+		<link rel="stylesheet" href="./styles/main.scss" />
+		<style></style>
+	</head>
+	<body>
+		<div id="container">
+			<div id="app">
+				<canvas id="canvas"></canvas>
+			</div>
+			<div id="top">
+				<div class="top-container">
+					<h2>見てわかる　感染症シュミレーション</h2>
+					<div class="top-text">
+						<p>
+							感染症の数理モデルで未知の病気が人から人からどのように感染するのか、シミュレーションすることが可能です。
+							数理モデルではデータやパラメータや方程式などを用いて数学的に様々な現象を予測していきます。
+						</p>
+						<p>
+							『見てわかる　感染症シュミレーション』では感染症がどう広がるかについて、<a
+								href="https://ja.wikipedia.org/wiki/SIR%E3%83%A2%E3%83%87%E3%83%AB"
+								>SIRモデル</a
+							>という古典的な感染症の数理モデルをベースにリアルタイムにシミュレーションを行っています。
+						</p>
+						<p>
+							数学や数式の知識はありません。</br>
+							3つのルールに基づき、3つのステップに分けて、感染症のシュミレーションを実行しています。
+							シュミレーション上で様々なパラメータを調整し、どう感染が変化するかを見ることができます。
+						</p>
+					</div>
+					<div class="button-wrapper">
+						<div class="button button-rule">
+							3つのルールを知る
+						</div>
+						<div class="button button-rule">
+							シュミレーションを見る
+						</div>
+					</div>
+					<div class="credit">
+						<p>GitHubにソースコードは公開しています。</p>
+						<p>
+							制作過程をnoteにまとめました。
+						</p>
+						<p>
+							企画構成/デザイン/開発:
+							<a href="https://www.kenji-special.info/">斎藤健二</a>
+						</p>
+					</div>
+				</div>
+			</div>
+			<div id="rule">
+				<div class="simulation-navigation-wrapper step-navigation-wrapper">
+					<div class="step-navigation step-navigation_prev">
+						前のステップを見る
+					</div>
+					<div class="step-navigation step-navigation_next">
+						次のステップを見る
+					</div>
+				</div>
+
+				<div class="rule-step-wrapper">
+					<div class="step-indicator-wrapper">
+						<div class="step-indicator step-indicator--step_1"></div>
+						<div class="step-indicator step-indicator--step_2"></div>
+						<div class="step-indicator step-indicator--step_3"></div>
+					</div>
+
+					<div class="rule-container rule-container_one">
+						<div class="rule-step-title">ルール1</div>
+						<div class="rule-step-text">
+							状態は3つ
+						</div>
+					</div>
+					<div class="rule-container rule-container_two">
+						<div class="rule-step-title">ルール2</div>
+						<div class="rule-step-text">
+							感染者からの接触で感染する
+						</div>
+					</div>
+					<div class="rule-container rule-container_three">
+						<div class="rule-step-title">ルール3</div>
+						<div class="rule-step-text">
+							一定時間が経過すると、感染者は免疫保持者になる
+						</div>
+					</div>
+				</div>
+
+				<div class="rule-explanation-container">
+					<div class="rule-explanation-content rule-one-content">
+						<div class="rule-explanation-paragraph">
+							<p>感染シミュレーションはSIRモデルをベースに作成しています。</p>
+							<p>SIRモデルの世界では人間を3つの状態で捉えます。</p>
+						</div>
+						<div class="rule-explanation-paragraph">
+							<p>
+								<span
+									class="rule-explanation-color rule-explanation-color-s color-first"
+								></span>
+								感受性者(Susceptible)　感染病に感染する能性がある
+							</p>
+							<p>
+								<span
+									class="rule-explanation-color rule-explanation-color-i color-first"
+								></span>
+								感染者(Infected)　感染病にかかってる
+							</p>
+							<p>
+								<span
+									class="rule-explanation-color rule-explanation-color-r color-first"
+								></span>
+								免疫保持者(Recovered 隔離者
+								Removed)　感染後、死亡または免疫を獲得した
+							</p>
+						</div>
+						<div class="rule-explanation-paragraph">
+							<p>
+								SIRモデルは
+								<span
+									class="rule-explanation-color rule-explanation-color-s color-first"
+								></span
+								>感受性者、<span
+									class="rule-explanation-color rule-explanation-color-i"
+								></span
+								>感染者、<span
+									class="rule-explanation-color rule-explanation-color-r"
+								></span
+								>免疫保持者の英語の頭文字に由来しています。
+							</p>
+						</div>
+					</div>
+					<div class="rule-explanation-content rule-two-content">
+						<div class="rule-explanation-paragraph">
+							<p>
+								<span
+									class="rule-explanation-color rule-explanation-color-s color-first"
+								></span
+								>感受性者が<span
+									class="rule-explanation-color rule-explanation-color-i"
+								></span
+								>感染者に接触すると感染し、<span
+									class="rule-explanation-color rule-explanation-color-i"
+								></span
+								>感染者になります。
+							</p>
+							<p>
+								<span
+									class="rule-explanation-color rule-explanation-color-r color-first"
+								></span
+								>免疫保持者が<span
+									class="rule-explanation-color rule-explanation-color-i"
+								></span
+								>感染者と接触しても、感染しません。
+							</p>
+						</div>
+					</div>
+					<div class="rule-explanation-content rule-three-content">
+						<div class="paramerter-container">
+							<div class="parameter-base"></div>
+							<div class="parameter-container"></div>
+						</div>
+						<div class="rule-explanation-paragraph">
+							<p>
+								<span
+									class="rule-explanation-color rule-explanation-color-i color-first"
+								></span
+								>感染者が一定の時間を経過すると<span
+									class="rule-explanation-color rule-explanation-color-r"
+								></span
+								>免疫保持者に変わります。
+							</p>
+							<p>
+								<span
+									class="rule-explanation-color rule-explanation-color-i color-first"
+								></span
+								>感染者が<span
+									class="rule-explanation-color rule-explanation-color-s"
+								></span
+								>感受性者に変わることはありません。
+							</p>
+						</div>
+					</div>
+				</div>
+
+				<div></div>
+			</div>
+			<div class="simulation">
+				<div class="simulation-navigation-wrapper step-navigation-wrapper">
+					<div class="step-navigation step-navigation_prev">
+						前のステップを見る
+					</div>
+					<div class="step-navigation step-navigation_next">
+						次のステップを見る
+					</div>
+				</div>
+
+				<div class="simulation-step-wrapper">
+					<div class="step-indicator-wrapper">
+						<div class="step-indicator step-indicator--step_1"></div>
+						<div class="step-indicator step-indicator--step_2"></div>
+						<div class="step-indicator step-indicator--step_3"></div>
+					</div>
+
+					<div class="simulation-step simulation-step_1">
+						<div class="simulation-step-title">ステップ1</div>
+						<div class="simulation-step-text">みんな動く</div>
+					</div>
+
+					<div class="simulation-step simulation-step_2">
+						<div class="simulation-step-title">ステップ2</div>
+						<div>
+							<div class="simulation-step-text">
+								感染者を隔離する
+							</div>
+						</div>
+					</div>
+
+					<div class="simulation-step simulation-step_3">
+						<div class="simulation-step-title">ステップ3</div>
+						<div>
+							<div class="simulation-step-text">
+								行動制限する
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="simulation-space-sliders space-sliders">
+					<div class="space-slider slider-container">
+						<div class="slider-title">
+							スペースの大きさ
+							<span class="slider-value slider--space_value">100</span>
+						</div>
+						<input
+							class="space-simulation-input simulation-input"
+							type="range"
+							max="200"
+							value="50"
+						/>
+					</div>
+
+					<div class="remove-slider slider-container">
+						<div class="slider-title">
+							隔離する割合
+							<span class="slider-value slider--remove_value">40</span> %
+						</div>
+						<input
+							class="remove-simulation-input simulation-input"
+							type="range"
+							max="100"
+							value="50"
+						/>
+					</div>
+
+					<div class="restriction-slider slider-container">
+						<div class="slider-title">
+							行動制限
+							<span class="slider-value slider--restriction_value">60</span> %
+						</div>
+
+						<input
+							class="restriction-simulation-input simulation-input"
+							type="range"
+							max="100"
+							value="50"
+						/>
+					</div>
+				</div>
+
+				<div class="simulation-visualizer">
+					<div class="simulation-visualizer-wrapper">
+						<!-- button -->
+						<div class="simulation-visualizer-button-container">
+							<div class="simulation-visualizer-button-wrapper button-play-pause">
+								<div
+									class="simulation-visualizer-button button-play simulation-visualizer-button--state_inactive"
+								>
+									<svg
+										class="simulation-visualizer-button__svg-play"
+										viewBox="0 0 20 20"
+									>
+										<path
+											d="M8,14.5l6,-4.5l-6,-4.5l0,9Zm2,-14.5c-5.52,0 -10,4.48 -10,10c0,5.52 4.48,10 10,10c5.52,0 10,-4.48 10,-10c0,-5.52 -4.48,-10 -10,-10Zm0,18c-4.41,0 -8,-3.59 -8,-8c0,-4.41 3.59,-8 8,-8c4.41,0 8,3.59 8,8c0,4.41 -3.59,8 -8,8Z"
+										/>
+									</svg>
+								</div>
+
+								<div class="simulation-visualizer-button button-pause">
+									<svg
+										class="simulation-visualizer-button__svg-pause"
+										viewBox="0 0 20 20"
+									>
+										<path
+											d="M7,14L9,14L9,6L7,6L7,14ZM10,0C4.48,0 0,4.48 0,10C0,15.52 4.48,20 10,20C15.52,20 20,15.52 20,10C20,4.48 15.52,0 10,0ZM10,18C5.59,18 2,14.41 2,10C2,5.59 5.59,2 10,2C14.41,2 18,5.59 18,10C18,14.41 14.41,18 10,18ZM11,14L13,14L13,6L11,6L11,14Z"
+										/>
+									</svg>
+								</div>
+
+								<div
+									class="simulation-visualizer-button button-simulation-done simulation-visualizer-button--state_inactive"
+								>
+									<div class="button-simulation-done-content">
+										感染収束
+									</div>
+								</div>
+							</div>
+							<div class="simulation-visualizer-button-wrapper  button-replay">
+								<div class="simulation-visualizer-button">
+									<svg
+										class="simulation-visualizer-button__svg-reset"
+										viewBox="0 0 24 24"
+									>
+										<g>
+											<path
+												d="M12,4L12,1L8,5L12,9L12,6C15.31,6 18,8.69 18,12C18,13.01 17.75,13.97 17.3,14.8L18.76,16.26C19.54,15.03 20,13.57 20,12C20,7.58 16.42,4 12,4ZM12,18C8.69,18 6,15.31 6,12C6,10.99 6.25,10.03 6.7,9.2L5.24,7.74C4.46,8.97 4,10.43 4,12C4,16.42 7.58,20 12,20L12,23L16,19L12,15L12,18Z"
+											/>
+										</g>
+									</svg>
+								</div>
+							</div>
+						</div>
+
+						<!-- state -->
+						<div class="simulation-visualizer-data-container">
+							<table>
+								<tr class="simulation-visualizer__item">
+									<td></td>
+									<td>
+										<div class="simulation-visualizer__item--name">時間</div>
+									</td>
+									<td>
+										<div class="simulation-visualizer__item--value">
+											<span
+												class="simulation-visualizer__item--value_number simulation-visualizer__item--value_number_second"
+												>100</span
+											>
+											s
+										</div>
+									</td>
+								</tr>
+
+								<tr class="simulation-visualizer__item">
+									<td>
+										<div
+											class="simulation-visualizer__item--color simulation-visualizer__item--color_blue"
+										></div>
+									</td>
+									<td>
+										<div class="simulation-visualizer__item--name">
+											感受性者
+										</div>
+									</td>
+									<td>
+										<div class="simulation-visualizer__item--value">
+											<span
+												class="simulation-visualizer__item--value_number simulation-visualizer__item--value_number_s"
+												>100</span
+											>
+											%
+										</div>
+									</td>
+								</tr>
+								<tr class="simulation-visualizer__item">
+									<td>
+										<div
+											class="simulation-visualizer__item--color simulation-visualizer__item--color_red"
+										></div>
+									</td>
+									<td>
+										<div class="simulation-visualizer__item--name">感染者</div>
+									</td>
+									<td>
+										<div class="simulation-visualizer__item--value">
+											<span
+												class="simulation-visualizer__item--value_number simulation-visualizer__item--value_number_i"
+												>100</span
+											>
+											%
+										</div>
+									</td>
+								</tr>
+								<tr class="simulation-visualizer__item">
+									<td>
+										<div
+											class="simulation-visualizer__item--color simulation-visualizer__item--color_orange"
+										></div>
+									</td>
+									<td>
+										<div class="simulation-visualizer__item--name">
+											免疫保持者
+										</div>
+									</td>
+									<td>
+										<div class="simulation-visualizer__item--value">
+											<span
+												class="simulation-visualizer__item--value_number simulation-visualizer__item--value_number_r"
+												>100</span
+											>
+											%
+										</div>
+									</td>
+								</tr>
+							</table>
+						</div>
+
+						<!-- canvas -->
+						<div class="simulation-visualizer-canvas-container">
+							<canvas id="simulation-visualizer-canvas"></canvas>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div id="minigame"></div>
+
+			<div id="navigation">
+				<ul>
+					<li class="navigation-element navigation-element-top">概要</li>
+					<li class="navigation-element navigation-element-rule">ルール</li>
+					<li class="navigation-element navigation-element-simulation">
+						シミュレーション
+					</li>
+				</ul>
+			</div>
+		</div>
+	</body>
+	<script src="demo.ts" charset="utf-8"></script>
+</html>

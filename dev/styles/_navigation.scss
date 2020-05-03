@@ -1,0 +1,46 @@
+#navigation{
+    position: absolute;
+    top: 40px;
+    left: 30px;
+
+    li{
+        color: $gray;
+        font-size: 18px;
+        margin-bottom: 20px;
+
+        &:hover{
+            color: $black;
+        }
+
+        
+
+        &.navigation-element{
+            cursor: pointer;
+            &--stata_active{
+                color: $black;
+            }
+        }
+    }
+}
+
+.step-navigation {
+    position: absolute;
+    cursor: pointer;
+    z-index: 999;
+    color: $black;
+
+    // bottom: 30px;
+    // transform: translate(0, -50%);
+    top: 50%;
+    
+    &:hover{
+        color: $gray;
+    }
+    &_prev{
+        left: 30px;
+    }
+
+    &_next{
+        right: 30px;
+    }
+}

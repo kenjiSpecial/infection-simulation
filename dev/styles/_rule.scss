@@ -1,0 +1,93 @@
+#rule {
+	display: none;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+}
+
+.rule-step-wrapper {
+	margin-top: 40px;
+}
+
+.rule-container {
+	text-align: center;
+
+	.rule-step-title {
+		font-size: 18px;
+		margin-bottom: 24px;
+	}
+
+	.rule-step-text {
+		font-size: 24px;
+	}
+}
+
+.rule-explanation-container {
+	position: absolute;
+	// bottom: 60px;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -8px);
+
+	width: 600px;
+
+	@include for-phone-tablet {
+		width: calc(100% - 40px);
+	}
+}
+
+.rule-explanation-paragraph {
+	color: $black;
+	font-size: 16px;
+	line-height: 1.75em;
+	margin-bottom: 20px;
+}
+
+.rule-explanation-color {
+	width: 12px;
+	height: 12px;
+	margin-right: 3px;
+	margin-left: 3px;
+    display: inline-block;
+    &.color-first{
+        margin-left: 0;
+    }
+	&-s {
+		background: $blue;
+	}
+	&-i {
+		background: $red;
+	}
+	&-r {
+		background: $orange;
+	}
+}
+
+.paramerter-container {
+	position: relative;
+	width: 100%;
+    height: 4px;
+    margin-top: 10px;
+	margin-bottom: 40px;
+
+	.parameter-base {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 5px;
+        background: $red;
+        // opacity: 0.6;
+    }
+    
+    .parameter-container {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 5px;
+		background: $orange;
+	}
+}

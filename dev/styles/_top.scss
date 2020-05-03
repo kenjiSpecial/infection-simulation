@@ -1,0 +1,78 @@
+#top {
+	display: none;
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	background: rgba(255, 255, 255, 0.7);
+	top: 0;
+    left: 0;
+    
+	.top-container {
+	    position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+
+		width: 600px;
+
+		@include for-phone-tablet {
+			width: calc(100% - 40px);
+        }
+        
+        h2{
+            color: $black;
+            font-size: 24px;
+            margin-bottom: 60px;
+            font-weight: 800;
+        }
+        p{
+            font-size: 16px;
+            line-height: 1.6em;
+            margin-bottom: 10px;
+            color: $black;
+        }
+        .top-text{
+            margin-bottom: 40px;
+        }
+        .button-wrapper{
+            margin-bottom: 60px;
+            display: flex;
+            flex-direction: row;     /* make main axis horizontal (default setting) */
+    justify-content: center; /* center items horizontally, in this case */
+    align-items: center; 
+        }
+        a{
+            color: $link;
+            text-decoration: none;
+
+            &:hover{
+                text-decoration: underline;
+            }
+        }
+        .credit{
+            text-align: right;
+            p{
+
+                margin-bottom: 0;
+            }
+        }
+    }
+    
+    .button{
+
+        background-color: white;
+        width: 200px;
+        // margin: 10px 40px;
+        text-align: center;
+        padding: 12px 15px;
+        border-radius: 15px;
+        border: solid $black 2px;
+        margin: 0 20px;
+        cursor: pointer;
+
+        &:hover{
+            color: $gray;
+            border-color: $gray;
+        }
+    }
+}

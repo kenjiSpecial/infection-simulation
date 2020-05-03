@@ -1,0 +1,24 @@
+// https://itnext.io/writing-media-queries-with-sass-mixins-3ea591ea3ea4
+@mixin for-phone-only {
+	@media (max-width: 680px) {
+		@content;
+	}
+}
+
+@mixin for-phone-tablet {
+	@media (max-width: 940px) {
+		@content;
+	}
+}
+
+@mixin for-tablet-up {
+	@media (min-width: 940px) {
+		@content;
+	}
+}
+
+@mixin for-desktop-up {
+	@media (min-width: 1200px) {
+		@content;
+	}
+}
