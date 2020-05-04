@@ -17,7 +17,6 @@ function gtag() {
 	dataLayer.push(arguments);
 }
 gtag('js', new Date());
-
 gtag('config', 'UA-42485016-4');
 
 export class Router {
@@ -34,16 +33,16 @@ export class Router {
 				'/simulation/:step': params => {
 					const step = params.step;
 					this.app.showSimulation(step);
-					gtag('config', 'GA_MEASUREMENT_ID', { page_path: `/simulation/${step}` });
+					gtag('config', 'UA-42485016-4', { page_path: `/simulation/${step}` });
 				},
 				'/rule/:step': params => {
 					const step = params.step;
 					this.app.showRule(step);
-					gtag('config', 'GA_MEASUREMENT_ID', { page_path: `/rule/${step}` });
+					gtag('config', 'UA-42485016-4', { page_path: `/rule/${step}` });
 				},
 				'*': () => {
 					this.app.showTop();
-					gtag('config', 'GA_MEASUREMENT_ID', { page_path: '/' });
+					gtag('config', 'UA-42485016-4', { page_path: '/' });
 				}
 			})
 			.resolve();
