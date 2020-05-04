@@ -1,5 +1,5 @@
 import { EventDispatcher } from 'three';
-import { BLUE, ORANGE, RED, SIMULATION } from '../threejs/utils/constants';
+import { BLUE, breakpoint, breakpoint1, breakpoint2, breakpoint3, ORANGE, RED, SIMULATION } from '../threejs/utils/constants';
 import {
 	CHANGE_REMOVE,
 	CHANGE_RESTRICTION,
@@ -114,7 +114,7 @@ export class Simulation extends EventDispatcher {
 		this.ctx.fillStyle = BLUE;
 		this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
 		this.ctx.save();
-		this.ctx.translate(0, 20);
+		this.ctx.translate(0, 0);
 		this.ctx.fillRect(0, 0, this.canvasWidth, this.visualHeight);
 
 		const timeArr = agentRate[0];
@@ -157,8 +157,8 @@ export class Simulation extends EventDispatcher {
 			for (let ii = 1; ii < totalTime; ii = ii + 1) {
 				this.ctx.beginPath();
 				const xpos = ii * dXdT;
-				this.ctx.moveTo(xpos, this.visualHeight - 2.0);
-				this.ctx.lineTo(xpos, this.visualHeight + 3.0);
+				this.ctx.moveTo(xpos, this.visualHeight - 1.0);
+				this.ctx.lineTo(xpos, this.visualHeight + 1.0);
 				this.ctx.closePath();
 
 				this.ctx.stroke();
@@ -204,6 +204,7 @@ export class Simulation extends EventDispatcher {
 				this.simulationStep2Element.style.display = 'none';
 				this.simulationStep3Element.style.display = 'none';
 				this.navigationNextElement.style.display = 'block';
+				this.navigationNextElement.innerText = 'ステップ2を見る';
 				this.navigationPrevElement.style.display = 'none';
 				this.spaceSlider.style.display = 'block';
 				this.removeSlider.style.display = 'none';
@@ -217,7 +218,9 @@ export class Simulation extends EventDispatcher {
 				this.simulationStep2Element.style.display = 'block';
 				this.simulationStep3Element.style.display = 'none';
 				this.navigationNextElement.style.display = 'block';
+				this.navigationNextElement.innerText = 'ステップ3を見る';
 				this.navigationPrevElement.style.display = 'block';
+				this.navigationPrevElement.innerText = 'ステップ1を見る';
 				this.spaceSlider.style.display = 'block';
 				this.removeSlider.style.display = 'block';
 				this.restrictionSlider.style.display = 'none';
@@ -231,6 +234,7 @@ export class Simulation extends EventDispatcher {
 				this.simulationStep3Element.style.display = 'block';
 				this.navigationNextElement.style.display = 'none';
 				this.navigationPrevElement.style.display = 'block';
+				this.navigationPrevElement.innerText = 'ステップ2を見る';
 				this.spaceSlider.style.display = 'block';
 				this.removeSlider.style.display = 'block';
 				this.restrictionSlider.style.display = 'block';
@@ -247,9 +251,9 @@ export class Simulation extends EventDispatcher {
 		const dataElWidth = this.dataContainer.clientWidth;
 		const dataElLeft = this.dataContainer.clientLeft;
 		const dataElTop = this.dataContainer.clientTop;
-		const customMargin = 120;
 		const { viewportWidth } = WindowManager.GET_SIZE();
 
+		const customMargin = viewportWidth < breakpoint2 ? 75 : viewportWidth < breakpoint1 ? 100 : viewportWidth < breakpoint3 ? 100 : 125;
 		const canvasWidth = viewportWidth - customMargin - buttonElWidth - dataElWidth;
 
 		this.canvasWidth = canvasWidth;
@@ -258,7 +262,7 @@ export class Simulation extends EventDispatcher {
 		this.canvas.height = this.canvasHeight;
 		this.canvas.style.width = `${canvasWidth}px`;
 		this.canvas.style.height = `${this.simulationVisualizerEl.clientHeight}px`;
-		this.visualHeight = this.canvasHeight - 40;
+		this.visualHeight = viewportWidth < breakpoint1 ? this.canvasHeight - 50 : viewportWidth < breakpoint3 ? this.canvasHeight - 30 : this.canvasHeight - 30;
 	}
 	public updateSimulationState(appState: string) {
 		if (appState === SIMULATION.PAUSE) {

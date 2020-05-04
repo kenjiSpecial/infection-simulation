@@ -57,3 +57,7 @@ export enum APP_STEP {
 }
 
 export const MAX_STEP = 3;
+
+export const breakpoint1 = 940;
+export const breakpoint2 = 680;
+export const breakpoint3 = 1200;

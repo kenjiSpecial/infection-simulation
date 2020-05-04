@@ -13,6 +13,8 @@ export class Renderer implements IRender, IBase {
 	private renderer: WebGLRenderer;
 	constructor(canvas: HTMLCanvasElement) {
 		this.renderer = new WebGLRenderer({ antialias: true, canvas: canvas });
+		const PIXEL_RATIO = window.devicePixelRatio > 1 ? 1.5 : 1;
+		this.renderer.setPixelRatio ( PIXEL_RATIO )
 		this.reset();
 	}
 	public render(scene: Scene, camera: Camera) {

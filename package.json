@@ -6,7 +6,7 @@
 	"author": "satotake",
 	"license": "MIT",
 	"scripts": {
-		"build": "rm -rf dist/*.* && parcel build dev/index.html --no-source-maps --public-url ./",
+		"build": "rm -rf dist/*.*  docs/*.* && parcel build dev/index.html --no-source-maps --public-url ./ --out-dir docs",
 		"doc": "typedoc --out docs --theme minimal --mode file src",
 		"start": "rm -rf dist/*.* && parcel serve dev/index.html --no-hmr",
 		"lint": "tslint -t stylish --project \"tsconfig.json\"",

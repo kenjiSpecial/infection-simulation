@@ -1,4 +1,3 @@
-
 .simulation {
 	display: none;
 	position: absolute;
@@ -7,8 +6,6 @@
 	width: 100%;
 	height: 100%;
 
-	
-
 	&-input {
 		width: 240px;
 	}
@@ -16,21 +13,53 @@
 	&-space-sliders {
 		width: 100%;
 		position: absolute;
-		display: flex;
 		align-items: center;
 		justify-content: center;
-		bottom: 190px;
+		
 		text-align: center;
-		&--title {
-			font-size: 24px;
-			margin-bottom: 20px;
+
+		@include for-phone-only {
+			bottom: 120px;
 		}
+
+		@include for-phone-up {
+			bottom: 160px;
+			display: flex;
+		}
+
+		@include for-tablet-up{
+			bottom: 150px;
+			display: flex;			
+		}
+
+		@include for-desktop-up {
+			bottom: 160px;
+			display: flex;
+		}
+
+		
 	}
 
 	&-visualizer {
 		position: absolute;
 		bottom: 0;
-		height: 170px;
+
+		@include for-phone-only {
+			height: 120px
+		}
+
+		@include for-phone-up {
+			height: 140px;
+		}
+
+		@include for-tablet-up {
+			height: 120px;
+		}
+
+		@include for-desktop-up {
+			height: 140px;
+		}
+
 		width: 100%;
 		background: #ffffff;
 		overflow: hidden;
@@ -40,15 +69,60 @@
 		}
 
 		&-button-container {
-			margin-left: 30px;
-			margin-top: 30px;
+			margin-top: 0;
+
+			// @include for-phone-tablet {
+			// 	margin-left: 20px;
+			// }
+
+			// @include for-tablet-up {
+			// 	margin-left: 30px;
+			// }
+
+			@include for-phone-only {
+				margin-left: 20px;
+			}
+	
+			@include for-phone-up {
+				margin-left: 25px;
+			}
+	
+			@include for-desktop-up {
+				margin-left: 30px;
+			}
 		}
 
 		&-button-wrapper {
 			position: relative;
-			width: 40px;
-			height: 40px;
-			margin-bottom: 30px;
+
+			// @include for-phone-tablet {
+			// 	width: 24px;
+			// 	height: 24px;
+			// 	margin-bottom: 18px;
+			// }
+
+			// @include for-tablet-up {
+			// 	width: 40px;
+			// 	height: 40px;
+			// 	margin-bottom: 30px;
+			// }
+			@include for-phone-only {
+				width: 24px;
+				height: 24px;
+				margin-bottom: 18px;
+			}
+	
+			@include for-phone-up {
+				width: 32px;
+				height: 32px;
+				margin-bottom: 24px;
+			}
+	
+			@include for-desktop-up {
+				width: 40px;
+				height: 40px;
+				margin-bottom: 30px;
+			}
 		}
 
 		&-button {
@@ -76,8 +150,21 @@
 
 		&-button__svg {
 			&-play {
-				width: 40px;
-				height: 40px;
+				
+				@include for-phone-only {
+					width: 24px;
+					height: 24px;
+				}
+		
+				@include for-phone-up {
+					width: 32px;
+					height: 32px;
+				}
+		
+				@include for-desktop-up {
+					width: 40px;
+					height: 40px;
+				}
 
 				path {
 					fill: $black;
@@ -85,8 +172,20 @@
 			}
 
 			&-pause {
-				width: 40px;
-				height: 40px;
+				@include for-phone-only {
+					width: 24px;
+					height: 24px;
+				}
+		
+				@include for-phone-up {
+					width: 32px;
+					height: 32px;
+				}
+		
+				@include for-desktop-up {
+					width: 40px;
+					height: 40px;
+				}
 
 				path {
 					fill: $black;
@@ -94,9 +193,20 @@
 			}
 
 			&-reset {
-				width: 40px;
-				height: 40px;
-
+				@include for-phone-only {
+					width: 24px;
+					height: 24px;
+				}
+		
+				@include for-phone-up {
+					width: 32px;
+					height: 32px;
+				}
+		
+				@include for-desktop-up {
+					width: 40px;
+					height: 40px;
+				}
 				path {
 					fill: $black;
 				}
@@ -104,15 +214,51 @@
 		}
 
 		&-data-container {
-			margin-left: 30px;
-			margin-top: 35px;
+			@include for-phone-only {
+				margin-left: 15px;
+				// margin-right: 20px;
+			}
+	
+			@include for-phone-up {
+				margin-left: 20px;
+				// margin-right: 25px;
+			}
+	
+			@include for-desktop-up {
+				margin-left: 30px;
+				margin-top: 0px;
+			}
 
 			td {
-				padding-right: 20px;
-				padding-bottom: 12px;
+				@include for-phone-only {
+					padding-right: 10px;
+					padding-bottom: 6px;
+				}
+		
+				@include for-phone-up {
+					padding-right: 15px;
+					padding-bottom: 9px
+				}
+		
+				@include for-desktop-up {
+					padding-right: 20px;
+					padding-bottom: 12px;
+				}
+
 				&:last-child {
 					text-align: right;
-					width: 60px;
+					@include for-phone-only {
+						width: 46px;
+					}
+			
+					@include for-phone-up {
+						width: 54px;
+					}
+			
+					@include for-desktop-up {
+						width: 60px;
+					}
+					
 					padding-right: 0px;
 				}
 			}
@@ -124,10 +270,38 @@
 
 		&__item {
 			&--color {
-				width: 16px;
-				height: 16px;
-				border-radius: 8px;
+				// @include for-phone-tablet {
+				// 	width: 12px;
+				// 	height: 12px;
+				// 	border-radius: 6px;
+				// }
 
+				// @include for-tablet-up {
+				// 	width: 16px;
+				// 	height: 16px;
+				// 	border-radius: 8px;
+				// }
+				display: inline-block;
+				position: relative;
+				@include for-phone-only {
+					top: 2px;
+					// margin-top: 4px;
+					width: 12px;
+					height: 12px;
+					border-radius: 6px;
+				}
+		
+				@include for-phone-up {
+					width: 14px;
+					height: 14px;
+					border-radius: 7px;
+				}
+		
+				@include for-desktop-up {
+					width: 16px;
+					height: 16px;
+					border-radius: 8px;
+				}
 				&_blue {
 					background-color: $blue;
 				}
@@ -142,16 +316,47 @@
 			}
 
 			&--name {
-				width: 80px;
+				@include for-phone-only {
+					width: 60px;
+				}
+		
+				@include for-phone-up {
+					width: 70px;
+				}
+		
+				@include for-desktop-up {
+					width: 80px;
+				}
 			}
 
 			&--value {
-				width: 60px;
+				@include for-phone-only {
+					width: 46px;
+				}
+		
+				@include for-phone-up {
+					width: 54px;
+				}
+		
+				@include for-desktop-up {
+					width: 60px;
+				}
+				
 			}
 		}
 
 		&-canvas-container {
-			margin-left: 30px;
+			@include for-phone-only {
+				margin-left: 20px;
+			}
+	
+			@include for-phone-up {
+				margin-left: 30px;
+			}
+
+			@include for-tablet-up {
+				margin-left: 30px;
+			}			
 		}
 	}
 
@@ -186,17 +391,17 @@
 input[type='range'] {
 	-webkit-appearance: none;
 	position: relative;
-	 background: rgba(0, 0, 0, 0);
-	 
-	 &::before{
-		 content: '';
-		 position: absolute;
-		 top: 0;
-		 left: 0;
-		 width: 100%;
-		 height: 2px;
-		 background: $black;
-	 }
+	background: rgba(0, 0, 0, 0);
+
+	&::before {
+		content: '';
+		position: absolute;
+		top: 10px;
+		left: 0;
+		width: 100%;
+		height: 2px;
+		background: $black;
+	}
 }
 
 input[type='range']::-webkit-slider-runnable-track {
@@ -212,76 +417,169 @@ input[type='range']::-webkit-slider-thumb {
 	width: 12px;
 	border-radius: 510%;
 	background: $black;
-	margin-top: -5px;
+	margin-top: 5px;
 	cursor: pointer;
 
-	&:hover{
+	&:hover {
 		background: $gray;
 	}
 }
-
 
 .clicked::-webkit-slider-thumb {
 	transform: scale(1.5);
 }
 
+.simulation-step-wrapper {
+	@include for-phone-tablet {
+		margin-top: 50px;
+	}
 
-.simulation-step-wrapper{
-	margin-top: 40px;
+	@include for-tablet-up {
+		margin-top: 40px;
+	}
 
+	@include for-desktop-up {
+		margin-top: 40px;
+	}
 }
 
-.simulation-step{
+.simulation-step {
 	text-align: center;
 
-	.simulation-step-title{
-		font-size: 16px;
+	.simulation-step-title {
+		@include for-phone-only {
+			font-size: 12px;
+			margin-bottom: 14px;
+		}
+
+		@include for-phone-up {
+			font-size: 14px;
+			margin-bottom: 15px;
+		}
+
+		@include for-desktop-up {
+			font-size: 16px;
+			margin-bottom: 20px;
+		}
+	}
+
+	.simulation-step-text {
+		@include for-phone-only {
+			font-size: 16px;
+		}
+
+		@include for-phone-up {
+			font-size: 18px;
+		}
+
+		@include for-desktop-up {
+			font-size: 20px;
+		}
+	}
+}
+
+.step-indicator-wrapper {
+	display: flex;
+	justify-content: center;
+	@include for-phone-only {
+		margin-bottom: 12px;
+	}
+
+	@include for-phone-up {
+		margin-bottom: 16px;
+	}
+
+	@include for-desktop-up {
 		margin-bottom: 20px;
 	}
 
-	.simulation-step-text{
-		font-size: 20px;
-	}
-}
-
-.step-indicator-wrapper{
-	display: flex;
-	justify-content: center;
-	margin-bottom: 20px;	
-
-	.step-indicator{
-		width: 12px;
-		height: 12px;
-		border-radius: 6px;
+	.step-indicator {
 		background-color: #999999;
-		margin-left: 10px;
-		margin-right: 10px;
+
+		@include for-phone-only {
+			width: 10px;
+			height: 10px;
+			border-radius: 5px;
+			margin-left: 5px;
+			margin-right: 5px;
+		}
+
+		@include for-phone-up {
+			width: 12px;
+			height: 12px;
+			border-radius: 6px;
+			margin-left: 8px;
+			margin-right: 8px;
+		}
+
+		@include for-desktop-up {
+			width: 12px;
+			height: 12px;
+			border-radius: 6px;
+			margin-left: 10px;
+			margin-right: 10px;
+		}
 		cursor: pointer;
-		&:hover{
+		&:hover {
 			background-color: $gray;
 		}
 
-		&--state_active{
+		&--state_active {
 			cursor: default;
 			background-color: #333333;
-			&:hover{
+			&:hover {
 				background-color: #333333;
 			}
 		}
 	}
 }
 
-.slider-title{
-	font-size: 16px;
-	margin-bottom: 18px;
+.slider-title {
+	
+	@include for-phone-only {
+		font-size: 12px;
+		margin-bottom: 12px;
+	}
+
+	@include for-phone-up {
+		font-size: 14px;
+		margin-bottom: 15px;
+	}
+
+	@include for-desktop-up {
+		font-size: 16px;
+		margin-bottom: 18px;
+	}
 }
 
-.simulation-input{
-	width: 200px;
+.simulation-input {
+	@include for-phone-only {
+		width: 140px;
+	}
+
+	@include for-phone-up {
+		width: 170px;
+	}
+
+	@include for-desktop-up {
+		width: 200px;
+	}
 }
 
-.slider-container{
+.slider-container {
 	color: $black;
 	margin-left: 25px;
 	margin-right: 25px;
+	@include for-phone-only {
+		// width: 140px;
+		margin-bottom: 20px;
+	}
+
+	@include for-phone-up {
+		// width: 170px;
+	}
+
+	@include for-desktop-up {
+		// width: 200px;
+	}	
 }

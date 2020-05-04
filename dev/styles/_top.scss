@@ -5,10 +5,10 @@
 	height: 100%;
 	background: rgba(255, 255, 255, 0.7);
 	top: 0;
-    left: 0;
-    
+	left: 0;
+
 	.top-container {
-	    position: absolute;
+		position: absolute;
 		top: 50%;
 		left: 50%;
 		transform: translate(-50%, -50%);
@@ -17,62 +17,126 @@
 
 		@include for-phone-tablet {
 			width: calc(100% - 40px);
-        }
-        
-        h2{
-            color: $black;
-            font-size: 20px;
-            margin-bottom: 50px;
-            font-weight: 800;
-        }
-        p{
-            font-size: 14px;
-            line-height: 1.6em;
-            margin-bottom: 10px;
-            color: $black;
-        }
-        .top-text{
-            margin-bottom: 40px;
-        }
-        .button-wrapper{
-            margin-bottom: 50px;
-            display: flex;
-            flex-direction: row;     /* make main axis horizontal (default setting) */
-    justify-content: center; /* center items horizontally, in this case */
-    align-items: center; 
-        }
-        a{
-            color: $link;
-            text-decoration: none;
+		}
 
-            &:hover{
-                text-decoration: underline;
+		h2 {
+			color: $black;
+
+			font-weight: 800;
+			@include for-phone-only {
+				font-size: 16px;
+				margin-bottom: 25px;
+			}
+
+			@include for-phone-up {
+				font-size: 18px;
+				margin-bottom: 35px;
+			}
+
+			@include for-desktop-up {
+				font-size: 20px;
+				margin-bottom: 50px;
+			}
+		}
+		p {
+			line-height: 1.6em;
+
+			@include for-phone-only {
+				font-size: 11px;
+				margin-bottom: 7px;
+			}
+
+			@include for-phone-up {
+				font-size: 12px;
+				margin-bottom: 8px;
+			}
+
+			@include for-desktop-up {
+				font-size: 14px;
+				margin-bottom: 10px;
+			}
+
+			color: $black;
+		}
+		.top-text {
+			@include for-phone-only {
+				margin-bottom: 20px;
+			}
+
+			@include for-phone-up {
+				margin-bottom: 30px;
+			}
+
+			@include for-desktop-up {
+				margin-bottom: 40px;
+			}
+		}
+		.button-wrapper {
+			@include for-phone-only{
+                margin-bottom: 20px;
             }
-        }
-        .credit{
-            text-align: right;
-            p{
 
-                margin-bottom: 0;
+            @include for-phone-up{
+                margin-bottom: 30px;
             }
-        }
-    }
-    
-    .button{
 
-        background-color: white;
-        width: 200px;
-        // margin: 10px 40px;
-        text-align: center;
-        padding: 12px 15px;
-        border-radius: 15px;
-        border: solid $black 2px;
-        margin: 0 20px;
+            @include for-desktop-up{
+                margin-bottom: 40px;
+            }
+
+			display: flex;
+			flex-direction: row; /* make main axis horizontal (default setting) */
+			justify-content: center; /* center items horizontally, in this case */
+			align-items: center;
+		}
+		a {
+			color: $link;
+			text-decoration: none;
+
+			&:hover {
+				text-decoration: underline;
+			}
+		}
+		.credit {
+			text-align: right;
+			p {
+				margin-bottom: 0;
+			}
+		}
+	}
+
+	.button {
+		background-color: white;
+		
+		text-align: center;
+		border: solid $black 2px;
+		margin: 0 20px;
         cursor: pointer;
-
-        &:hover{
-            color: $gray;
-            border-color: $gray;
+        
+        @include for-phone-only {
+            width: 160px;
+            font-size: 12px;            
+            padding: 10px 12px;
+            border-radius: 12px;
         }
-    }
+
+        @include for-phone-up {
+            width: 180px;
+            font-size: 14px;            
+            padding: 10px 13px;
+            border-radius: 13px;
+        }
+
+        @include for-desktop-up {
+            width: 200px;
+            font-size: 16px;            
+            padding: 12px 15px;
+            border-radius: 15px;
+        }
+
+		&:hover {
+			color: $gray;
+			border-color: $gray;
+		}
+	}
 }

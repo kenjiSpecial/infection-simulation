@@ -1,47 +1,115 @@
-#navigation{
-    position: absolute;
-    top: 40px;
-    left: 30px;
+#navigation {
+	position: absolute;
 
-    li{
-        color: $gray;
-        font-size: 16px;
-        margin-bottom: 16px;
+	user-select: none;
+	li {
+		color: $gray;
+		margin-bottom: 1em;
 
-        &:hover{
-            color: $black;
-        }
+		&:hover {
+			color: $black;
+		}
 
-        
+		@include for-phone-tablet {
+			font-size: 14px;
+			margin-left: 10px;
+			margin-right: 10px;
+		}
+		
+		
 
-        &.navigation-element{
-            cursor: pointer;
-            &--state_active{
-                color: $black;
-            }
+		@include for-tablet-up {
+			font-size: 14px;
+		}
 
-        }
-    }
+		@include for-desktop-up {
+			font-size: 16px;
+		}
+
+		&.navigation-element {
+			cursor: pointer;
+			&--state_active {
+				color: $black;
+			}
+		}
+	}
+
+	ul {
+		@include for-phone-tablet {
+			display: flex;
+		}
+
+		@include for-tablet-up {
+			display: block;
+		}
+	}
+
+	@include for-phone-tablet {
+		top: 20px;
+		left: 10px;
+	}
+
+	@include for-tablet-up {
+		top: 30px;
+		left: 20px;
+	}
+
+	@include for-desktop-up {
+		top: 40px;
+		left: 30px;
+	}
 }
 
 .step-navigation {
-    position: absolute;
-    cursor: pointer;
-    z-index: 999;
-    color: $black;
+	position: absolute;
+	cursor: pointer;
+	z-index: 999;
+	color: $gray;
+	user-select: none;
 
-    // bottom: 30px;
-    // transform: translate(0, -50%);
-    top: 50%;
-    
-    &:hover{
+	&:hover {
+		color:$black;
+    }
+    &:active{
         color: $gray;
     }
-    &_prev{
-        left: 30px;
-    }
+	&_prev {
+        @include for-phone-tablet {
+			left: 20px;
+		}
 
-    &_next{
-        right: 30px;
-    }
+		@include for-tablet-up {
+			left: 30px;
+		}
+
+		@include for-desktop-up {
+			left: 30px;
+		}
+	}
+
+	&_next {
+		@include for-phone-tablet {
+			right: 20px;
+		}
+
+		@include for-tablet-up {
+			right: 30px;
+		}
+
+		@include for-desktop-up {
+			right: 30px;
+		}
+	}
+
+	@include for-phone-tablet {
+		bottom: 20px;
+	}
+
+	@include for-tablet-up {
+		top: 50%;
+	}
+
+	@include for-desktop-up {
+		top: 50%;
+	}
 }
