@@ -51,6 +51,8 @@ export class ThreeJsApp extends EventDispatcher implements IBase {
 		1,
 		10000
 	);
+	private normalCameraPos: Vector3 = new Vector3();
+	private activeCameraPos: Vector3 = new Vector3();
 	private gui?: GUI;
 	private playAndStopGui?: GUIController;
 	private isDebug: boolean = false;
@@ -60,6 +62,12 @@ export class ThreeJsApp extends EventDispatcher implements IBase {
 	private boudary: Boundary = new Boundary();
 	private bg: Bg = new Bg();
 	private glAppModel: GLAppModel = new GLAppModel();
+	private closeDistance: number = 10;
+	private closeCos: number = Math.cos((15 / 180) * Math.PI);
+	private closeSin: number = Math.sin((15 / 180) * Math.PI);
+	private baseDistance: number = 100;
+	private baseCos: number = Math.cos((20 / 180) * Math.PI);
+	private baseSin: number = Math.sin((20 / 180) * Math.PI);
 	constructor() {
 		super();
 		const canvas = document.getElementById('canvas') as HTMLCanvasElement;
@@ -174,6 +182,7 @@ export class ThreeJsApp extends EventDispatcher implements IBase {
 		this.camera.aspect = viewportWidth / viewportHeight;
 		this.camera.updateProjectionMatrix();
 
+		this.resetCamera(false);
 		this.renderer.resize(viewportWidth, viewportHeight);
 	}
 
@@ -224,13 +233,12 @@ export class ThreeJsApp extends EventDispatcher implements IBase {
 	public showTop() {
 		this.glAppModel.updateSceneTop();
 
-
 		if (this.ruleAgentCollection) {
 			this.ruleAgentCollection.removeScene(this.scene);
 		}
 
 		if (this.simulationAgentCollection) {
-		this.simulationAgentCollection.reset(this.boudary.getSize(), '1', 0);
+			this.simulationAgentCollection.reset(this.boudary.getSize(), '1', 0);
 			this.simulationAgentCollection.addScene(this.scene);
 		}
 	}
@@ -262,20 +270,46 @@ export class ThreeJsApp extends EventDispatcher implements IBase {
 		}
 	}
 
-	public moveCamera() {
-		switch (this.glAppModel.scene) {
-			case SCENE.RULE:
-				gsap.to(this.camera.position, {
-					duration: 2,
-					z: 50,
-					y: 20,
-					onUpdate: () => {
-						this.camera.lookAt(new Vector3());
-					},
-					ease: 'power2.inOut'
-				});
-				break;
-			default:
+	public moveCamera(isAnimation: boolean = true) {
+		if (isAnimation) {
+			gsap.killTweensOf(this.camera.position);
+			switch (this.glAppModel.scene) {
+				case SCENE.RULE:
+					gsap.to(this.camera.position, {
+						duration: 2,
+						z: this.closeDistance * this.closeCos,
+						y: this.closeDistance * this.closeSin,
+						onUpdate: () => {
+							this.camera.lookAt(new Vector3());
+						},
+						ease: 'power2.inOut'
+					});
+					break;
+				default:
+					gsap.to(this.camera.position, {
+						duration: 2,
+						z: this.baseDistance * this.baseCos,
+						y: this.baseDistance * this.baseSin,
+						onUpdate: () => {
+							this.camera.lookAt(new Vector3());
+						},
+						ease: 'power2.inOut'
+					});
+			}
+		} else {
+			switch (this.glAppModel.scene) {
+				case SCENE.RULE:
+					this.camera.position.set(
+						0,
+						this.closeDistance * this.closeSin,
+						this.closeDistance * this.closeCos
+					);
+					break;
+				default:
+					this.camera.position.z = this.baseDistance * this.baseCos;
+					this.camera.position.y = this.baseDistance * this.baseSin;
+			}
+			this.camera.lookAt(new Vector3());
 		}
 	}
 
@@ -288,9 +322,81 @@ export class ThreeJsApp extends EventDispatcher implements IBase {
 	}
 
 	private resetCamera() {
-		this.camera.position.z = 200;
-		this.camera.position.y = 75;
+		const targetPos = new Vector4(50, 0, 50, 1);
+		let baseDis = this.baseDistance;
+		let baseDis2 = this.baseDistance;
+		let targetWindowPosX = 0.6;
+
+		for (let ii = 0; ii < 10; ii = ii + 1) {
+			this.camera.position.z = baseDis * this.baseCos;
+			this.camera.position.y = baseDis * this.baseSin;
+			this.camera.lookAt(new Vector3(0, 0, 0));
+
+			this.camera.updateMatrixWorld(true);
+			const projectedPos = targetPos
+				.clone()
+				.applyMatrix4(this.camera.matrixWorldInverse)
+				.applyMatrix4(this.camera.projectionMatrix);
+			const scaledXBefore = projectedPos.x / projectedPos.w;
+
+			this.camera.position.z = (baseDis + 1) * this.baseCos;
+			this.camera.position.y = (baseDis + 1) * this.baseSin;
+			this.camera.lookAt(new Vector3(0, 0, 0));
+			this.camera.updateMatrixWorld(true);
+			const projectedPos2 = targetPos
+				.clone()
+				.applyMatrix4(this.camera.matrixWorldInverse)
+				.applyMatrix4(this.camera.projectionMatrix);
+			const scaledXAfter = projectedPos2.x / projectedPos2.w;
+
+			const moveDis = (targetWindowPosX - scaledXBefore) / (scaledXAfter - scaledXBefore);
+			baseDis = baseDis + moveDis;
+			if (baseDis < 0) {
+				baseDis = baseDis2;
+				baseDis2 = baseDis2 -= 1;
+				targetWindowPosX *= 0.95;
+			}
+		}
+		this.baseDistance = baseDis;
+
+		const targetPos2 = new Vector4(10, 0, 0, 1);
+		targetWindowPosX = 0.3;
+		for (let ii = 0; ii < 10; ii = ii + 1) {
+			this.camera.position.z = this.closeDistance * this.closeCos;
+			this.camera.position.y = this.closeDistance * this.closeSin;
+			this.camera.lookAt(new Vector3(0, 0, 0));
+			this.camera.updateMatrixWorld(true);
+			const projectedPos = targetPos2
+				.clone()
+				.applyMatrix4(this.camera.matrixWorldInverse)
+				.applyMatrix4(this.camera.projectionMatrix);
+			const scaledXBefore = projectedPos.x / projectedPos.w;
+
+			this.camera.position.z = (this.closeDistance + 1) * this.closeCos;
+			this.camera.position.y = (this.closeDistance + 1) * this.closeSin;
+			this.camera.lookAt(new Vector3(0, 0, 0));
+			this.camera.updateMatrixWorld(true);
+			const projectedPos2 = targetPos2
+				.clone()
+				.applyMatrix4(this.camera.matrixWorldInverse)
+				.applyMatrix4(this.camera.projectionMatrix);
+			const scaledXAfter = projectedPos2.x / projectedPos2.w;
+
+			const moveDis = (targetWindowPosX - scaledXBefore) / (scaledXAfter - scaledXBefore);
+			this.closeDistance = this.closeDistance + moveDis;
+		}
+
+		if (this.glAppModel.scene === SCENE.RULE) {
+			this.camera.position.z = this.closeDistance * this.baseCos;
+			this.camera.position.y = this.closeDistance * this.baseSin;
+		} else {
+			this.camera.position.z = this.baseDistance * this.baseCos;
+			this.camera.position.y = this.baseDistance * this.baseSin;
+		}
+
 		this.camera.lookAt(new Vector3(0, 0, 0));
+
+		// this.closeDistance = baseDis3;
 	}
 
 	private createAgents() {

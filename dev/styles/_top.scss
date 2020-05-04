@@ -21,12 +21,12 @@
         
         h2{
             color: $black;
-            font-size: 24px;
-            margin-bottom: 60px;
+            font-size: 20px;
+            margin-bottom: 50px;
             font-weight: 800;
         }
         p{
-            font-size: 16px;
+            font-size: 14px;
             line-height: 1.6em;
             margin-bottom: 10px;
             color: $black;
@@ -35,7 +35,7 @@
             margin-bottom: 40px;
         }
         .button-wrapper{
-            margin-bottom: 60px;
+            margin-bottom: 50px;
             display: flex;
             flex-direction: row;     /* make main axis horizontal (default setting) */
     justify-content: center; /* center items horizontally, in this case */

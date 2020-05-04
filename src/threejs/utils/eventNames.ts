@@ -25,3 +25,5 @@ export const NAVIGATE_TOP = 'navigate:top';
 export const NAVIGATE_RULE = 'navigate:rule';
 export const NAVIGATE_SIMULATION = 'navigate:simulation';
 export const UPDATE_RULE = 'update:rule';
+export const CLICK_RULE_BTN = 'click:rule:btn';
+export const CLICK_SIM_BTN = 'click:simulation:btn';

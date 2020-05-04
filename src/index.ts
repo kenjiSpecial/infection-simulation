@@ -1,4 +1,4 @@
-import { EventDispatcher } from 'three';
+import { EventDispatcher, Scene } from 'three';
 import { Navigation } from './dom/navigation';
 import { Rule } from './dom/rule';
 import { Simulation } from './dom/simulation';
@@ -11,6 +11,8 @@ import {
 	CHANGE_SPACE_SIZE,
 	CLICK_PLAY_PAUSE_BTN,
 	CLICK_RESET_BTN,
+	CLICK_RULE_BTN,
+	CLICK_SIM_BTN,
 	DONE_SIMULATION,
 	MOVE_NEXT_STEP,
 	MOVE_PREV_STEP,
@@ -73,11 +75,12 @@ export class App extends EventDispatcher {
 	}
 
 	public showSimulation(step: string) {
+		this.model.prevScene = this.model.scene;
 		this.model.scene = SCENE.SIMULATION;
-
-		this.threeJsApp.showSimulation(step);
+		this.navigation.update(this.model.scene)
+		this.threeJsApp.showSimulation(step); 
 		this.simulation.showScene(this.threeJsApp.getSimulationStep());
-		
+
 		this.top.hide();
 		this.rule.hide();
 
@@ -88,12 +91,20 @@ export class App extends EventDispatcher {
 				this.threeJsApp.getRestrictionRate(),
 				this.threeJsApp.getRemoveRate()
 			);
+
+			if (this.model.prevScene !== this.model.scene) {
+				this.threeJsApp.moveCamera();
+			}
 		}
 		
+
+
 	}
 
 	public showTop() {
+		this.model.prevScene = this.model.scene;
 		this.model.scene = SCENE.TOP;
+		this.navigation.update(this.model.scene)
 		this.top.show();
 		this.simulation.hide();
 		this.rule.hide();
@@ -101,11 +112,16 @@ export class App extends EventDispatcher {
 		if (this.threeJsApp.getIsLoaded()) {
 			this.threeJsApp.forceAppStatePlayable();
 			this.threeJsApp.play();
+			if (this.model.prevScene !== this.model.scene) {
+				this.threeJsApp.moveCamera();
+			}
 		}
 	}
 
 	public showRule(ruleStep: string) {
+		this.model.prevScene = this.model.scene;
 		this.model.scene = SCENE.RULE;
+		this.navigation.update(this.model.scene)
 		this.top.hide();
 		this.simulation.hide();
 		this.rule.show();
@@ -116,7 +132,10 @@ export class App extends EventDispatcher {
 		if (this.threeJsApp.getIsLoaded()) {
 			this.threeJsApp.updateRuleAgent();
 			this.threeJsApp.forceAppStatePlayable();
-			this.threeJsApp.play();			
+			this.threeJsApp.play();
+			if (this.model.prevScene !== this.model.scene) {
+				this.threeJsApp.moveCamera();
+			}
 		}
 	}
 
@@ -135,8 +154,9 @@ export class App extends EventDispatcher {
 			default:
 		}
 
+		const isAnimation = false;
 		this.threeJsApp.resetAgents();
-		this.threeJsApp.moveCamera();
+		this.threeJsApp.moveCamera(isAnimation);
 
 		this.threeJsApp.startTick();
 	}
@@ -233,6 +253,12 @@ export class App extends EventDispatcher {
 			}
 			this.dispatchEvent({ type: UPDATE_RULE, step: event.step });
 		});
+		this.top.addEventListener(CLICK_RULE_BTN, () => {
+			this.dispatchEvent({ type: UPDATE_RULE, step: '1' });
+		});
+		this.top.addEventListener(CLICK_SIM_BTN, () => {
+			this.dispatchEvent({ type: UPDATE_STEP, step: '1' });
+		});
 	}
 
 	// event callback function
@@ -241,7 +267,7 @@ export class App extends EventDispatcher {
 	}
 
 	private onClickResetBtnHandler() {
-		this.threeJsApp.resetApp(this.model.scene);
+		this.threeJsApp.resetSimulationApp(this.model.scene);
 	}
 
 	private onUpdateAppStateHandler() {

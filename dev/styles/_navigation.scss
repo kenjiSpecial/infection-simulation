@@ -5,8 +5,8 @@
 
     li{
         color: $gray;
-        font-size: 18px;
-        margin-bottom: 20px;
+        font-size: 16px;
+        margin-bottom: 16px;
 
         &:hover{
             color: $black;
@@ -16,9 +16,10 @@
 
         &.navigation-element{
             cursor: pointer;
-            &--stata_active{
+            &--state_active{
                 color: $black;
             }
+
         }
     }
 }

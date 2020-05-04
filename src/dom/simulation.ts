@@ -360,6 +360,7 @@ export class Simulation extends EventDispatcher {
 	}
 
 	private onClickResetButtonHandler() {
+		console.log('click');
 		this.dispatchEvent({ type: CLICK_RESET_BTN });
 	}
 }
