@@ -26,13 +26,16 @@ export class Router {
 				'/simulation/:step': params => {
 					const step = params.step;
 					this.app.showSimulation(step);
+					gtag('config', 'GA_MEASUREMENT_ID', {'page_path': `/simulation/${step}`});
 				},
 				'/rule/:step': params => {
 					const step = params.step;
 					this.app.showRule(step);
+					gtag('config', 'GA_MEASUREMENT_ID', {'page_path': `/rule/${step}`});
 				},
 				'*': () => {
 					this.app.showTop();
+					gtag('config', 'GA_MEASUREMENT_ID', {'page_path': '/'});
 				}
 			})
 			.resolve();
