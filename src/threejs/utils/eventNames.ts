@@ -27,3 +27,4 @@ export const NAVIGATE_SIMULATION = 'navigate:simulation';
 export const UPDATE_RULE = 'update:rule';
 export const CLICK_RULE_BTN = 'click:rule:btn';
 export const CLICK_SIM_BTN = 'click:simulation:btn';
+export const FORCE_UPDATE_SIMULATION = 'force:updaste:simulation';

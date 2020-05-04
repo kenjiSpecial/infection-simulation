@@ -14,6 +14,7 @@ import {
 	CLICK_RULE_BTN,
 	CLICK_SIM_BTN,
 	DONE_SIMULATION,
+	FORCE_UPDATE_SIMULATION,
 	MOVE_NEXT_STEP,
 	MOVE_PREV_STEP,
 	NAVIGATE_RULE,
@@ -77,8 +78,8 @@ export class App extends EventDispatcher {
 	public showSimulation(step: string) {
 		this.model.prevScene = this.model.scene;
 		this.model.scene = SCENE.SIMULATION;
-		this.navigation.update(this.model.scene)
-		this.threeJsApp.showSimulation(step); 
+		this.navigation.update(this.model.scene);
+		this.threeJsApp.showSimulation(step);
 		this.simulation.showScene(this.threeJsApp.getSimulationStep());
 
 		this.top.hide();
@@ -96,15 +97,12 @@ export class App extends EventDispatcher {
 				this.threeJsApp.moveCamera();
 			}
 		}
-		
-
-
 	}
 
 	public showTop() {
 		this.model.prevScene = this.model.scene;
 		this.model.scene = SCENE.TOP;
-		this.navigation.update(this.model.scene)
+		this.navigation.update(this.model.scene);
 		this.top.show();
 		this.simulation.hide();
 		this.rule.hide();
@@ -121,7 +119,7 @@ export class App extends EventDispatcher {
 	public showRule(ruleStep: string) {
 		this.model.prevScene = this.model.scene;
 		this.model.scene = SCENE.RULE;
-		this.navigation.update(this.model.scene)
+		this.navigation.update(this.model.scene);
 		this.top.hide();
 		this.simulation.hide();
 		this.rule.show();
@@ -225,6 +223,9 @@ export class App extends EventDispatcher {
 		});
 
 		this.threeJsApp.addEventListener(UPDATE_APP_STATE, this.onUpdateAppStateHandler);
+		this.threeJsApp.addEventListener(FORCE_UPDATE_SIMULATION, () => {
+			this.simulation.update(this.threeJsApp.getAgentRate(), this.threeJsApp.getTotalTime());
+		});
 		this.navigation.addEventListener(NAVIGATE_TOP, this.navigateToTop);
 		this.navigation.addEventListener(NAVIGATE_RULE, this.navigateToRule);
 		this.navigation.addEventListener(NAVIGATE_SIMULATION, this.navigateToSimulation);
@@ -233,10 +234,11 @@ export class App extends EventDispatcher {
 			const ruleStep = this.threeJsApp.getRuleStep();
 			const ruleStepNum = Number(ruleStep);
 			if (ruleStepNum >= MAX_STEP) {
-				return;
+				this.dispatchEvent({ type: UPDATE_STEP, step: '1' });
+			} else {
+				const step = (ruleStepNum + 1).toString();
+				this.dispatchEvent({ type: UPDATE_RULE, step: step });
 			}
-			const step = (ruleStepNum + 1).toString();
-			this.dispatchEvent({ type: UPDATE_RULE, step: step });
 		});
 		this.rule.addEventListener(MOVE_PREV_STEP, () => {
 			const ruleStep = this.threeJsApp.getRuleStep();

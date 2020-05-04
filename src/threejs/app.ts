@@ -24,10 +24,11 @@ import { Renderer } from './components/renderer';
 import { RuleAgentCollection } from './components/ruleAgentCollection';
 import { SimluatinAgentCollection } from './components/simluatinAgentCollection';
 import { GLAppModel } from './models/glAppModel';
-import { SCENE, SIMULATION } from './utils/constants';
+import { APP_STATE, SCENE, SIMULATION } from './utils/constants';
 import {
 	ASSETS_LOADED,
 	DONE_SIMULATION,
+	FORCE_UPDATE_SIMULATION,
 	RESIZE,
 	UPDATE_AGENT_RATE,
 	UPDATE_APP_STATE
@@ -182,8 +183,13 @@ export class ThreeJsApp extends EventDispatcher implements IBase {
 		this.camera.aspect = viewportWidth / viewportHeight;
 		this.camera.updateProjectionMatrix();
 
-		this.resetCamera(false);
+		this.resetCamera();
 		this.renderer.resize(viewportWidth, viewportHeight);
+
+		if (this.glAppModel.simulationState === SIMULATION.PAUSE) {
+			this.render();
+			this.dispatchEvent({ type: FORCE_UPDATE_SIMULATION });
+		}
 	}
 
 	public destroy() {}
@@ -241,6 +247,7 @@ export class ThreeJsApp extends EventDispatcher implements IBase {
 			this.simulationAgentCollection.reset(this.boudary.getSize(), '1', 0);
 			this.simulationAgentCollection.addScene(this.scene);
 		}
+		this.boudary.hideBed();
 	}
 
 	public showRule(step: string) {
@@ -253,6 +260,7 @@ export class ThreeJsApp extends EventDispatcher implements IBase {
 		if (this.ruleAgentCollection) {
 			this.ruleAgentCollection.addScene(this.scene);
 		}
+		this.boudary.hideBed();
 	}
 
 	public updateRuleAgent() {
@@ -267,6 +275,12 @@ export class ThreeJsApp extends EventDispatcher implements IBase {
 		}
 		if (this.simulationAgentCollection) {
 			this.simulationAgentCollection.addScene(this.scene);
+		}
+
+		if (step === '1') {
+			this.boudary.hideBed();
+		} else {
+			this.boudary.showBed();
 		}
 	}
 

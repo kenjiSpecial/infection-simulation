@@ -132,7 +132,8 @@ export class Rule extends EventDispatcher {
 		this.rule2ContentEl.style.display = 'none';
 		this.rule3ContentEl.style.display = 'block';
 
-		this.nextEl.style.display = 'none';
+		this.nextEl.style.display = 'block';
+		this.nextEl.innerText = 'シミュレーションを見る';
 		this.prevEl.style.display = 'block';
 		this.prevEl.innerText = "ルール2を見る"
 

@@ -15,8 +15,8 @@ export interface IModel {
 	setBoundary(boundary: { minX: number; maxX: number; minZ: number; maxZ: number }): void;
 }
 
-const minVel = -20;
-const maxVel = 20;
+const minVel = -15;
+const maxVel = 15;
 export class AgentModel extends EventDispatcher implements IModel {
 	public id: string = Math.random()
 		.toString(36)
@@ -66,7 +66,7 @@ export class AgentModel extends EventDispatcher implements IModel {
 			});
 			gsap.to(this.position, {
 				duration: 1.2,
-				y: 5,
+				y: -30,
 				onUpdate: () => {
 					this.dispatchEvent({ type: UPDATE_POSITION });
 				},
