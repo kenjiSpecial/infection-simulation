@@ -12,6 +12,14 @@ import {
 	UPDATE_STEP
 } from './threejs/utils/eventNames';
 
+window.dataLayer = window.dataLayer || [];
+function gtag() {
+	dataLayer.push(arguments);
+}
+gtag('js', new Date());
+
+gtag('config', 'UA-42485016-4');
+
 export class Router {
 	private router: Navigo;
 	private app: App;
@@ -26,16 +34,16 @@ export class Router {
 				'/simulation/:step': params => {
 					const step = params.step;
 					this.app.showSimulation(step);
-					gtag('config', 'GA_MEASUREMENT_ID', {'page_path': `/simulation/${step}`});
+					gtag('config', 'GA_MEASUREMENT_ID', { page_path: `/simulation/${step}` });
 				},
 				'/rule/:step': params => {
 					const step = params.step;
 					this.app.showRule(step);
-					gtag('config', 'GA_MEASUREMENT_ID', {'page_path': `/rule/${step}`});
+					gtag('config', 'GA_MEASUREMENT_ID', { page_path: `/rule/${step}` });
 				},
 				'*': () => {
 					this.app.showTop();
-					gtag('config', 'GA_MEASUREMENT_ID', {'page_path': '/'});
+					gtag('config', 'GA_MEASUREMENT_ID', { page_path: '/' });
 				}
 			})
 			.resolve();
