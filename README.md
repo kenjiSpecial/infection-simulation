@@ -1,4 +1,4 @@
-# 見てわかる　感染症シュミレーション
+# 見てわかる　感染シュミレーション
 
 https://www.kenji-special.info/infection-simulation/
 
