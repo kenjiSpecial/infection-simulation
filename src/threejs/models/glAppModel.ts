@@ -94,6 +94,9 @@ export class GLAppModel extends EventDispatcher implements IBase {
 			this.prevTime = curTime;
 		}
 		this.dt = (curTime - this.prevTime) / 1000;
+		if(this.dt > 1){
+			this.dt = 0;
+		}
 		this.prevTime = curTime;
 		this.totalTime += this.dt;
 	}
