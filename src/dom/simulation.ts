@@ -467,7 +467,11 @@ export class Simulation extends EventDispatcher {
 		this.dispatchEvent({ type: FORCE_UPDATE_SIMULATION });
 	}
 	private onMouseMoveCanvasHandler(event: MouseEvent) {
-		const rateX = (event.offsetX - this.marginLeft) / (this.canvasWidth - this.marginLeft);
+		let rateX = (event.offsetX - this.marginLeft) / (this.canvasWidth - this.marginLeft);
+		if(rateX < 0){
+			rateX = 0;
+		}
+		
 		this.dispatchEvent({ type: MOUSE_MOVE_CANVAS, posX: event.offsetX, rateX: rateX });
 	}
 }

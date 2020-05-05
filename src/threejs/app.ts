@@ -211,7 +211,7 @@ export class ThreeJsApp extends EventDispatcher implements IBase {
 				this.glAppModel.loaded();
 			},
 			xhr => {
-				console.log((xhr.loaded / xhr.total) * 100 + '% loaded');
+				// console.log((xhr.loaded / xhr.total) * 100 + '% loaded');
 			},
 			error => {
 				console.log('An error happened');
@@ -346,31 +346,34 @@ export class ThreeJsApp extends EventDispatcher implements IBase {
 			this.glAppModel.appState === APP_STATE.DONE
 		) {
 			// this.glAppModel.findPlayback(rate);
-			const agentRateArr = this.glAppModel.getAgentRate();
-			const timeStampArr = agentRateArr[0];
-			let low = 0;
-			let high = agentRateArr[0].length - 1;
 			let targetIndex = 0;
-			while (low <= high) {
-				const mid = Math.floor((low + high) / 2);
-				const midRate = timeStampArr[mid] / this.glAppModel.getTotalTime();
-				targetIndex = mid;
-				if (rate === midRate) {
-					break;
-				} else if (rate > midRate) {
-					low = mid + 1;
-				} else if (rate < mid) {
-					high = mid - 1;
+			if (rate >= 0) {
+				const agentRateArr = this.glAppModel.getAgentRate();
+				const timeStampArr = agentRateArr[0];
+				let low = 0;
+				let high = agentRateArr[0].length - 1;
+
+				while (low <= high) {
+					const mid = Math.floor((low + high) / 2);
+					const midRate = timeStampArr[mid] / this.glAppModel.getTotalTime();
+					targetIndex = mid;
+					if (rate === midRate) {
+						break;
+					} else if (rate > midRate) {
+						low = mid + 1;
+					} else if (rate < mid) {
+						high = mid - 1;
+					}
 				}
 			}
 
 			this.simulationAgentCollection.findIndex(targetIndex);
 			this.render();
-			this.dispatchEvent({type: PLAYBACK_SIMULATION, index: targetIndex})
+			this.dispatchEvent({ type: PLAYBACK_SIMULATION, index: targetIndex });
 		}
 	}
 
-	public findLast(){
+	public findLast() {
 		const targetIndex = this.glAppModel.getAgentRate()[0].length - 1;
 		this.simulationAgentCollection.findIndex(targetIndex);
 	}
@@ -455,7 +458,6 @@ export class ThreeJsApp extends EventDispatcher implements IBase {
 		const agent = new AgentFactory(this.agentGeometry);
 		this.simulationAgentCollection = new SimluatinAgentCollection(agent);
 		this.simulationAgentCollection.setBoundary(this.boudary.getBoundary());
-		this.glAppModel.setAgentRate(this.simulationAgentCollection.getAgentRate());
 
 		this.ruleAgentCollection = new RuleAgentCollection(agent);
 	}

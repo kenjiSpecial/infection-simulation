@@ -234,6 +234,7 @@ export class AgentModel extends EventDispatcher implements IModel {
 
 		const state = this.states[index];
 		if(state !== this.state){
+			
 			this.state = state;
 			this.color = AGENT_COLOR[this.state].clone();
 			this.dispatchEvent({ type: UPDATE_STATE });
