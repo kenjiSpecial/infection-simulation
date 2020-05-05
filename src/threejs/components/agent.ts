@@ -88,6 +88,18 @@ export class Agent extends EventDispatcher {
 		this.shadowMaterial.opacity = 1;
 	}
 
+	public savePosition(){
+		this.model.savePosition();
+	}
+
+	public saveState(){
+		this.model.saveState();
+	}
+
+	public findIndex(index: number){
+		this.model.findIndex(index);
+	}
+
 	private createAgentObject(agentBody: BufferGeometry) {
 		this.material = new MeshPhongMaterial({ color: this.model.color });
 		const peopleMesh = new Mesh(agentBody, this.material);

@@ -28,3 +28,5 @@ export const UPDATE_RULE = 'update:rule';
 export const CLICK_RULE_BTN = 'click:rule:btn';
 export const CLICK_SIM_BTN = 'click:simulation:btn';
 export const FORCE_UPDATE_SIMULATION = 'force:updaste:simulation';
+export const MOUSE_MOVE_CANVAS = 'mouseMove:canvas';
+export const PLAYBACK_SIMULATION = 'playback:simulation';

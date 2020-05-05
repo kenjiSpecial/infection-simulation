@@ -15,11 +15,13 @@ import {
 	CLICK_SIM_BTN,
 	DONE_SIMULATION,
 	FORCE_UPDATE_SIMULATION,
+	MOUSE_MOVE_CANVAS,
 	MOVE_NEXT_STEP,
 	MOVE_PREV_STEP,
 	NAVIGATE_RULE,
 	NAVIGATE_SIMULATION,
 	NAVIGATE_TOP,
+	PLAYBACK_SIMULATION,
 	RESIZE,
 	START_UPDATE_SPACE_SIZE,
 	UPDATE_AGENT_RATE,
@@ -67,7 +69,11 @@ export class App extends EventDispatcher {
 			this.startApplication();
 		});
 		this.threeJsApp.addEventListener(UPDATE_AGENT_RATE, () => {
-			this.simulation.update(this.threeJsApp.getAgentRate(), this.threeJsApp.getTotalTime());
+			this.simulation.update(
+				this.threeJsApp.getAgentRate(),
+				this.threeJsApp.getTotalTime(),
+				this.threeJsApp.getMaxValue()
+			);
 		});
 		this.threeJsApp.addEventListener(DONE_SIMULATION, () => {
 			this.simulation.doneSimulation();
@@ -169,7 +175,10 @@ export class App extends EventDispatcher {
 		}
 	}
 
+	// tslint:disable-next-line: max-func-body-length
 	private addEvents() {
+		// simulation
+
 		this.simulation.addEventListener(CLICK_PLAY_PAUSE_BTN, this.onClickPlayPauseBtnHandler);
 		this.simulation.addEventListener(CLICK_RESET_BTN, this.onClickResetBtnHandler);
 		this.simulation.addEventListener(MOVE_NEXT_STEP, () => {
@@ -222,9 +231,39 @@ export class App extends EventDispatcher {
 			this.threeJsApp.render();
 		});
 
+		this.simulation.addEventListener(MOUSE_MOVE_CANVAS, event => {
+			this.threeJsApp.playback(event.rateX);
+		});
+		this.simulation.addEventListener(FORCE_UPDATE_SIMULATION, ()=>{
+			if(this.threeJsApp.getScene() === SCENE.SIMULATION && this.threeJsApp.getAppState() === APP_STATE.DONE){
+				this.threeJsApp.findLast();
+				this.threeJsApp.render();
+				this.simulation.update(
+					this.threeJsApp.getAgentRate(),
+					this.threeJsApp.getTotalTime(),
+					this.threeJsApp.getMaxValue()
+				)
+			}
+			;
+		})
+
+		// threeJsApp
+
 		this.threeJsApp.addEventListener(UPDATE_APP_STATE, this.onUpdateAppStateHandler);
 		this.threeJsApp.addEventListener(FORCE_UPDATE_SIMULATION, () => {
-			this.simulation.update(this.threeJsApp.getAgentRate(), this.threeJsApp.getTotalTime());
+			this.simulation.update(
+				this.threeJsApp.getAgentRate(),
+				this.threeJsApp.getTotalTime(),
+				this.threeJsApp.getMaxValue()
+			);
+		});
+		this.threeJsApp.addEventListener(PLAYBACK_SIMULATION, (event) => {
+			this.simulation.update(
+				this.threeJsApp.getAgentRate(),
+				this.threeJsApp.getTotalTime(),
+				this.threeJsApp.getMaxValue(),
+				event.index
+			);
 		});
 		this.navigation.addEventListener(NAVIGATE_TOP, this.navigateToTop);
 		this.navigation.addEventListener(NAVIGATE_RULE, this.navigateToRule);

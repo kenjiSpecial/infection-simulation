@@ -1,11 +1,25 @@
 import { EventDispatcher } from 'three';
-import { BLUE, breakpoint, breakpoint1, breakpoint2, breakpoint3, ORANGE, RED, SIMULATION } from '../threejs/utils/constants';
+import {
+	BLUE,
+	breakpoint,
+	breakpoint1,
+	breakpoint2,
+	breakpoint3,
+	DARK_BLUE,
+	DARK_ORANGE,
+	DARK_RED,
+	ORANGE,
+	RED,
+	SIMULATION
+} from '../threejs/utils/constants';
 import {
 	CHANGE_REMOVE,
 	CHANGE_RESTRICTION,
 	CHANGE_SPACE_SIZE,
 	CLICK_PLAY_PAUSE_BTN,
 	CLICK_RESET_BTN,
+	FORCE_UPDATE_SIMULATION,
+	MOUSE_MOVE_CANVAS,
 	MOVE_NEXT_STEP,
 	MOVE_PREV_STEP,
 	START_UPDATE_SPACE_SIZE,
@@ -52,6 +66,7 @@ export class Simulation extends EventDispatcher {
 	private canvasWidth: number;
 	private canvasHeight: number;
 	private visualHeight: number;
+	private marginLeft: number = 3;
 
 	constructor() {
 		super();
@@ -59,6 +74,10 @@ export class Simulation extends EventDispatcher {
 		this.ctx = this.canvas.getContext('2d');
 		this.onClickPlayButtonHandler = this.onClickPlayButtonHandler.bind(this);
 		this.onClickResetButtonHandler = this.onClickResetButtonHandler.bind(this);
+
+		this.onMouseEnterCanvasHandler = this.onMouseEnterCanvasHandler.bind(this);
+		this.onMouseLeaveCanvasHandler = this.onMouseLeaveCanvasHandler.bind(this);
+		this.onMouseMoveCanvasHandler = this.onMouseMoveCanvasHandler.bind(this);
 
 		this.el = document.querySelector('.simulation');
 		this.simulationVisualizerEl = document.getElementsByClassName(
@@ -110,12 +129,20 @@ export class Simulation extends EventDispatcher {
 		this.resize();
 		this.addEvents();
 	}
-	public update(agentRate: number[][], totalTime: number) {
+	// tslint:disable-next-line: max-func-body-length
+	public update(
+		agentRate: number[][],
+		totalTime: number,
+		max: { value: number; time: number },
+		findIndex?: number
+	) {
+		const marginLeft = this.marginLeft;
 		this.ctx.fillStyle = BLUE;
 		this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
 		this.ctx.save();
-		this.ctx.translate(0, 0);
-		this.ctx.fillRect(0, 0, this.canvasWidth, this.visualHeight);
+		this.ctx.translate(marginLeft, 0);
+		const canvasWidth = this.canvasWidth - marginLeft;
+		this.ctx.fillRect(0, 0, canvasWidth, this.visualHeight);
 
 		const timeArr = agentRate[0];
 		const blueArrRate = agentRate[1];
@@ -123,9 +150,8 @@ export class Simulation extends EventDispatcher {
 		const orangeArrRate = agentRate[3];
 		const agentSize = timeArr.length;
 
+		const dXdT = canvasWidth / totalTime;
 		if (agentSize > 1 && totalTime > 0) {
-			const dXdT = this.canvasWidth / totalTime;
-
 			this.ctx.fillStyle = ORANGE;
 			this.ctx.beginPath();
 			this.ctx.moveTo(0, this.visualHeight);
@@ -135,7 +161,7 @@ export class Simulation extends EventDispatcher {
 				const ypos = this.visualHeight * (1 - redOrangeRate);
 				this.ctx.lineTo(xpos, ypos);
 			}
-			this.ctx.lineTo(this.canvasWidth, this.visualHeight);
+			this.ctx.lineTo(canvasWidth, this.visualHeight);
 			this.ctx.closePath();
 			this.ctx.fill();
 
@@ -148,9 +174,23 @@ export class Simulation extends EventDispatcher {
 				const ypos = this.visualHeight * (1 - redRate);
 				this.ctx.lineTo(xpos, ypos);
 			}
-			this.ctx.lineTo(this.canvasWidth, this.visualHeight);
+			this.ctx.lineTo(canvasWidth, this.visualHeight);
 			this.ctx.closePath();
 			this.ctx.fill();
+
+			if (max.value > 0) {
+				const xpos = max.time * dXdT;
+				const ypos = this.visualHeight * (1 - max.value);
+
+				this.ctx.strokeStyle = DARK_RED;
+				this.ctx.beginPath();
+				this.ctx.moveTo(xpos, ypos);
+				this.ctx.lineTo(xpos, this.visualHeight);
+				this.ctx.stroke();
+			}
+
+			if (findIndex > 0) {
+			}
 
 			this.ctx.lineWidth = 1.5;
 			this.ctx.strokeStyle = '#666666';
@@ -160,23 +200,72 @@ export class Simulation extends EventDispatcher {
 				this.ctx.moveTo(xpos, this.visualHeight - 1.0);
 				this.ctx.lineTo(xpos, this.visualHeight + 1.0);
 				this.ctx.closePath();
-
 				this.ctx.stroke();
 			}
-		} else {
+		}
+		this.ctx.restore();
+
+		this.ctx.lineWidth = 1.5;
+		this.ctx.strokeStyle = '#666666';
+		for (let ii = 1; ii < 4; ii = ii + 1) {
+			this.ctx.beginPath();
+			if (ii === 2) {
+				this.ctx.moveTo(1, (this.visualHeight / 4) * ii);
+			} else {
+				this.ctx.moveTo(2, (this.visualHeight / 4) * ii);
+			}
+			this.ctx.lineTo(4, (this.visualHeight / 4) * ii);
+			this.ctx.closePath();
+			this.ctx.stroke();
 		}
 
-		this.ctx.restore();
-		const curTime = timeArr[agentSize - 1];
-		const curSRate = blueArrRate[agentSize - 1];
-		const curIRate = redArrRate[agentSize - 1];
-		const curRRate = orangeArrRate[agentSize - 1];
-		this.updateData(
-			curTime.toFixed(2),
-			(curSRate * 100).toFixed(1),
-			(curIRate * 100).toFixed(1),
-			(curRRate * 100).toFixed(1)
-		);
+		if (findIndex > 0) {
+			const xpos = timeArr[findIndex] * dXdT;
+
+			const curSRate = blueArrRate[findIndex];
+			const curIRate = redArrRate[findIndex];
+			const curRRate = orangeArrRate[findIndex];
+			const curSYPos = curSRate * this.visualHeight;
+			const curRYPos = (curSRate + curRRate) * this.visualHeight;
+
+			this.ctx.strokeStyle = DARK_BLUE;
+			this.ctx.beginPath();
+			this.ctx.moveTo(xpos, 0);
+			this.ctx.lineTo(xpos, curSYPos);
+			this.ctx.stroke();
+
+			this.ctx.strokeStyle = DARK_ORANGE;
+			this.ctx.beginPath();
+			this.ctx.moveTo(xpos, curSYPos);
+			this.ctx.lineTo(xpos, curRYPos);
+			this.ctx.stroke();
+
+			this.ctx.strokeStyle = DARK_RED;
+			this.ctx.beginPath();
+			this.ctx.moveTo(xpos, curRYPos);
+			this.ctx.lineTo(xpos, this.visualHeight);
+			this.ctx.stroke();
+
+			const curTime = timeArr[findIndex];
+
+			this.updateData(
+				curTime.toFixed(2),
+				(curSRate * 100).toFixed(1),
+				(curIRate * 100).toFixed(1),
+				(curRRate * 100).toFixed(1)
+			);
+		} else {
+			const curTime = timeArr[agentSize - 1];
+			const curSRate = blueArrRate[agentSize - 1];
+			const curIRate = redArrRate[agentSize - 1];
+			const curRRate = orangeArrRate[agentSize - 1];
+			this.updateData(
+				curTime.toFixed(2),
+				(curSRate * 100).toFixed(1),
+				(curIRate * 100).toFixed(1),
+				(curRRate * 100).toFixed(1)
+			);
+		}
 	}
 	public show(space: number, restriction: number, removed: number) {
 		this.el.style.display = 'block';
@@ -194,7 +283,7 @@ export class Simulation extends EventDispatcher {
 		this.resize();
 		this.updateData();
 	}
-	public hide(){
+	public hide() {
 		this.el.style.display = 'none';
 	}
 	public showScene(simulationStep: string) {
@@ -253,7 +342,14 @@ export class Simulation extends EventDispatcher {
 		const dataElTop = this.dataContainer.clientTop;
 		const { viewportWidth } = WindowManager.GET_SIZE();
 
-		const customMargin = viewportWidth < breakpoint2 ? 75 : viewportWidth < breakpoint1 ? 100 : viewportWidth < breakpoint3 ? 100 : 125;
+		const customMargin =
+			viewportWidth < breakpoint2
+				? 75
+				: viewportWidth < breakpoint1
+				? 100
+				: viewportWidth < breakpoint3
+				? 100
+				: 125;
 		const canvasWidth = viewportWidth - customMargin - buttonElWidth - dataElWidth;
 
 		this.canvasWidth = canvasWidth;
@@ -262,7 +358,12 @@ export class Simulation extends EventDispatcher {
 		this.canvas.height = this.canvasHeight;
 		this.canvas.style.width = `${canvasWidth}px`;
 		this.canvas.style.height = `${this.simulationVisualizerEl.clientHeight}px`;
-		this.visualHeight = viewportWidth < breakpoint1 ? this.canvasHeight - 50 : viewportWidth < breakpoint3 ? this.canvasHeight - 30 : this.canvasHeight - 30;
+		this.visualHeight =
+			viewportWidth < breakpoint1
+				? this.canvasHeight - 50
+				: viewportWidth < breakpoint3
+				? this.canvasHeight - 30
+				: this.canvasHeight - 30;
 	}
 	public updateSimulationState(appState: string) {
 		if (appState === SIMULATION.PAUSE) {
@@ -301,7 +402,6 @@ export class Simulation extends EventDispatcher {
 		// space value
 		this.spaceSimulationInput.addEventListener('change', () => {
 			this.sliderSpaceValue.innerText = `${Number(this.spaceSimulationInput.value) + 50}`;
-			// this.dispatchEvent({ type: UPDATE_SPACE_SIZE, value: this.spaceSimulationInput.value });
 		});
 
 		this.spaceSimulationInput.addEventListener('input', () => {
@@ -312,10 +412,6 @@ export class Simulation extends EventDispatcher {
 		// restriction value
 		this.restrictionSimulationInput.addEventListener('change', () => {
 			this.sliderRestrictionValue.innerText = this.restrictionSimulationInput.value;
-			// this.dispatchEvent({
-			// 	type: UPDATE_RESTRICTION,
-			// 	value: this.restrictionSimulationInput.value
-			// });
 		});
 
 		this.restrictionSimulationInput.addEventListener('input', () => {
@@ -329,10 +425,6 @@ export class Simulation extends EventDispatcher {
 		// remove value
 		this.removeSimulationInput.addEventListener('change', () => {
 			this.sliderRemoveValue.innerText = this.removeSimulationInput.value;
-			// this.dispatchEvent({
-			// 	type: UPDATE_REMOVE,
-			// 	value: this.removeSimulationInput.value
-			// });
 		});
 
 		this.removeSimulationInput.addEventListener('input', () => {
@@ -358,13 +450,24 @@ export class Simulation extends EventDispatcher {
 		this.indicatorStep3.addEventListener('click', () => {
 			this.dispatchEvent({ type: UPDATE_STEP, step: '3' });
 		});
+		this.canvas.addEventListener('mouseenter', this.onMouseEnterCanvasHandler);
+		this.canvas.addEventListener('mouseleave', this.onMouseLeaveCanvasHandler);
+		this.canvas.addEventListener('mousemove', this.onMouseMoveCanvasHandler);
 	}
 	private onClickPlayButtonHandler() {
 		this.dispatchEvent({ type: CLICK_PLAY_PAUSE_BTN });
 	}
 
 	private onClickResetButtonHandler() {
-		console.log('click');
 		this.dispatchEvent({ type: CLICK_RESET_BTN });
+	}
+
+	private onMouseEnterCanvasHandler() {}
+	private onMouseLeaveCanvasHandler() {
+		this.dispatchEvent({ type: FORCE_UPDATE_SIMULATION });
+	}
+	private onMouseMoveCanvasHandler(event: MouseEvent) {
+		const rateX = (event.offsetX - this.marginLeft) / (this.canvasWidth - this.marginLeft);
+		this.dispatchEvent({ type: MOUSE_MOVE_CANVAS, posX: event.offsetX, rateX: rateX });
 	}
 }

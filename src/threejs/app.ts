@@ -29,6 +29,8 @@ import {
 	ASSETS_LOADED,
 	DONE_SIMULATION,
 	FORCE_UPDATE_SIMULATION,
+	PLAYBACK,
+	PLAYBACK_SIMULATION,
 	RESIZE,
 	UPDATE_AGENT_RATE,
 	UPDATE_APP_STATE
@@ -130,6 +132,9 @@ export class ThreeJsApp extends EventDispatcher implements IBase {
 	}
 	public getTotalTime() {
 		return this.glAppModel.getTotalTime();
+	}
+	public getMaxValue() {
+		return this.glAppModel.max;
 	}
 	public getSimulationState() {
 		return this.glAppModel.simulationState;
@@ -335,6 +340,41 @@ export class ThreeJsApp extends EventDispatcher implements IBase {
 		this.glAppModel.startTick();
 	}
 
+	public playback(rate: number) {
+		if (
+			this.glAppModel.scene === SCENE.SIMULATION &&
+			this.glAppModel.appState === APP_STATE.DONE
+		) {
+			// this.glAppModel.findPlayback(rate);
+			const agentRateArr = this.glAppModel.getAgentRate();
+			const timeStampArr = agentRateArr[0];
+			let low = 0;
+			let high = agentRateArr[0].length - 1;
+			let targetIndex = 0;
+			while (low <= high) {
+				const mid = Math.floor((low + high) / 2);
+				const midRate = timeStampArr[mid] / this.glAppModel.getTotalTime();
+				targetIndex = mid;
+				if (rate === midRate) {
+					break;
+				} else if (rate > midRate) {
+					low = mid + 1;
+				} else if (rate < mid) {
+					high = mid - 1;
+				}
+			}
+
+			this.simulationAgentCollection.findIndex(targetIndex);
+			this.render();
+			this.dispatchEvent({type: PLAYBACK_SIMULATION, index: targetIndex})
+		}
+	}
+
+	public findLast(){
+		const targetIndex = this.glAppModel.getAgentRate()[0].length - 1;
+		this.simulationAgentCollection.findIndex(targetIndex);
+	}
+
 	private resetCamera() {
 		const targetPos = new Vector4(50, 0, 50, 1);
 		let baseDis = this.baseDistance;
@@ -409,8 +449,6 @@ export class ThreeJsApp extends EventDispatcher implements IBase {
 		}
 
 		this.camera.lookAt(new Vector3(0, 0, 0));
-
-		// this.closeDistance = baseDis3;
 	}
 
 	private createAgents() {
@@ -454,6 +492,7 @@ export class ThreeJsApp extends EventDispatcher implements IBase {
 					this.glAppModel.infectiousProbability,
 					this.glAppModel.removeRate
 				);
+				this.simulationAgentCollection.saveAgentData();
 				this.glAppModel.setAgentRate(this.simulationAgentCollection.getAgentRate());
 
 				if (this.simulationAgentCollection.getAgentRate()[1] === 0) {

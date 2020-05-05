@@ -21,8 +21,11 @@ export enum AGENT_STATE {
 	R = 'R'
 }
 
+export const DARK_BLUE = '#187ec7';
 export const BLUE = '#2da7ff';
+export const DARK_RED = '#e43838';
 export const RED = '#ff6d6d';
+export const DARK_ORANGE = '#e57814';
 export const ORANGE = '#ffb46f';
 
 export const AGENT_COLOR = {

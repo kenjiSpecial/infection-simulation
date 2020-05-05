@@ -2,7 +2,12 @@ import gsap from 'gsap';
 import { Color, EventDispatcher, MathUtils, Vector3 } from 'three';
 import { IBase } from '../app';
 import { AGENT_COLOR, AGENT_STATE } from '../utils/constants';
-import { REMOVED_AGENT, UPDATE_POSITION, UPDATE_STATE, WILL_REMOVE_AGENT } from '../utils/eventNames';
+import {
+	REMOVED_AGENT,
+	UPDATE_POSITION,
+	UPDATE_STATE,
+	WILL_REMOVE_AGENT
+} from '../utils/eventNames';
 
 export interface IModel {
 	id: string;
@@ -40,6 +45,8 @@ export class AgentModel extends EventDispatcher implements IModel {
 	};
 	private isRemoved: boolean = false;
 	private delayedCall1: gsap.core.Tween;
+	private positions: number[] = [];
+	private states: string[] = [];
 
 	constructor() {
 		super();
@@ -70,12 +77,9 @@ export class AgentModel extends EventDispatcher implements IModel {
 				onUpdate: () => {
 					this.dispatchEvent({ type: UPDATE_POSITION });
 				},
-				onComplete: () => {
-					this.isRemoved = true;
-				},
 				ease: 'power4.inOut'
 			});
-			
+
 			this.dispatchEvent({ type: WILL_REMOVE_AGENT });
 		}
 
@@ -109,12 +113,12 @@ export class AgentModel extends EventDispatcher implements IModel {
 					this.dispatchEvent({ type: UPDATE_POSITION });
 				},
 				onComplete: () => {
-					this.isRemoved = true;
+					this.isRemoved = false;
 				},
 				ease: 'power4.inOut'
 			});
 
-			this.dispatchEvent({type: REMOVED_AGENT})
+			this.dispatchEvent({ type: REMOVED_AGENT });
 		}
 	}
 
@@ -138,6 +142,14 @@ export class AgentModel extends EventDispatcher implements IModel {
 				this.setInfection(removeRate);
 			}
 		}
+	}
+
+	public savePosition() {
+		this.positions.push(this.position.x, this.position.y, this.position.z);
+	}
+
+	public saveState(){
+		this.states.push(this.state);
 	}
 
 	public update(dt: number, infectionDuration: number) {
@@ -186,6 +198,8 @@ export class AgentModel extends EventDispatcher implements IModel {
 			);
 		}
 
+		this.positions = [];
+		this.states = [];
 		this.infectionTime = 0;
 		this.isRemoved = false;
 	}
@@ -209,6 +223,21 @@ export class AgentModel extends EventDispatcher implements IModel {
 
 	public getIsRemoved() {
 		return this.isRemoved;
+	}
+
+	public findIndex(index: number) {
+		this.setPosition(
+			this.positions[index * 3],
+			this.positions[index * 3 + 1],
+			this.positions[index * 3 + 2]
+		);
+
+		const state = this.states[index];
+		if(state !== this.state){
+			this.state = state;
+			this.color = AGENT_COLOR[this.state].clone();
+			this.dispatchEvent({ type: UPDATE_STATE });
+		}
 	}
 
 	private updateInfectious(dt: number, infectionDuration: number) {

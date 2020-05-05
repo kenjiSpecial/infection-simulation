@@ -15,6 +15,7 @@ export class GLAppModel extends EventDispatcher implements IBase {
 	public restrictRate: number = 0.8;
 	public removeRate: number = 0.3;
 	public isAutoPuase: boolean = true;
+	public max: { value: number; time: number } = { value: -9999, time: 0 };
 	private isLoad: boolean = false;
 	private prevTime: number;
 	private totalTime: number = 0;
@@ -37,17 +38,19 @@ export class GLAppModel extends EventDispatcher implements IBase {
 		this.simulationStep = step;
 	}
 
-	public updateSceneRule(step: string){
+	public updateSceneRule(step: string) {
 		this.scene = SCENE.RULE;
 		this.ruleStep = step;
 	}
 
-	public updateSceneTop(){
+	public updateSceneTop() {
 		this.scene = SCENE.TOP;
 	}
 
 	public reset() {
 		this.agentRateArr = [[], [], [], []];
+		this.max.value = -1;
+		this.max.time = 0;
 		this.totalTime = 0;
 		this.dispatchEvent({ type: RESET_APP_MODEL });
 
@@ -118,12 +121,17 @@ export class GLAppModel extends EventDispatcher implements IBase {
 		for (let ii = 0; ii < agentRateArr.length; ii = ii + 1) {
 			this.agentRateArr[ii + 1].push(agentRateArr[ii]);
 		}
+
+		if (this.max.value < agentRateArr[1]) {
+			this.max.time = this.totalTime;
+			this.max.value = agentRateArr[1];
+		}
 	}
 
-	public setRestriction(value: number){
+	public setRestriction(value: number) {
 		this.restrictRate = value;
 	}
-	public setRemove(value: number){
+	public setRemove(value: number) {
 		this.removeRate = value;
 	}
 

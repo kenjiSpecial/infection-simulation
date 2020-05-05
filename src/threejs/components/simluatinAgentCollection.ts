@@ -55,6 +55,17 @@ export class SimluatinAgentCollection extends EventDispatcher {
 			agent.setBondary(boundary);
 		}
 	}
+	public findIndex(index: number) {
+		for (const agent of this.agentArr) {
+			agent.findIndex(index);
+		}
+	}
+	public saveAgentData() {
+		for (const agent of this.agentArr) {
+			agent.savePosition();
+			agent.saveState();
+		}
+	}
 	public reset(boundarySize: Vector2, step: string, restrictRate: number) {
 		function shuffle(array) {
 			array.sort(() => Math.random() - 0.5);
