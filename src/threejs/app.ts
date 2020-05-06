@@ -68,6 +68,8 @@ export class ThreeJsApp extends EventDispatcher implements IBase {
 	private closeDistance: number = 10;
 	private closeCos: number = Math.cos((15 / 180) * Math.PI);
 	private closeSin: number = Math.sin((15 / 180) * Math.PI);
+	private cameraAnimationProgress: number = 0;
+	private closeLookAtPosition: Vector3 = new Vector3();
 	private baseDistance: number = 100;
 	private baseCos: number = Math.cos((20 / 180) * Math.PI);
 	private baseSin: number = Math.sin((20 / 180) * Math.PI);
@@ -291,25 +293,52 @@ export class ThreeJsApp extends EventDispatcher implements IBase {
 
 	public moveCamera(isAnimation: boolean = true) {
 		if (isAnimation) {
-			gsap.killTweensOf(this.camera.position);
+			gsap.killTweensOf(this, 'cameraAnimationProgress');
 			switch (this.glAppModel.scene) {
 				case SCENE.RULE:
-					gsap.to(this.camera.position, {
+					gsap.to(this, {
 						duration: 2,
-						z: this.closeDistance * this.closeCos,
-						y: this.closeDistance * this.closeSin,
+						cameraAnimationProgress: 1,
 						onUpdate: () => {
-							this.camera.lookAt(new Vector3());
+							// this.camera.lookAt(new Vector3());
+							const posY =
+								this.baseDistance *
+									this.baseSin *
+									(1 - this.cameraAnimationProgress) +
+								this.closeDistance * this.closeSin * this.cameraAnimationProgress;
+							const posZ =
+								this.baseDistance *
+									this.baseCos *
+									(1 - this.cameraAnimationProgress) +
+								this.closeDistance * this.closeCos * this.cameraAnimationProgress;
+							this.camera.position.set(0, posY, posZ);
+							this.camera.lookAt(
+								new Vector3(
+									0,
+									this.closeLookAtPosition.y * this.cameraAnimationProgress,
+									this.closeLookAtPosition.z * this.cameraAnimationProgress
+								)
+							);
 						},
 						ease: 'power2.inOut'
 					});
 					break;
 				default:
-					gsap.to(this.camera.position, {
+					gsap.to(this, {
 						duration: 2,
-						z: this.baseDistance * this.baseCos,
-						y: this.baseDistance * this.baseSin,
+						cameraAnimationProgress: 0,
 						onUpdate: () => {
+							const posY =
+								this.baseDistance *
+									this.baseSin *
+									(1 - this.cameraAnimationProgress) +
+								this.closeDistance * this.closeSin * this.cameraAnimationProgress;
+							const posZ =
+								this.baseDistance *
+									this.baseCos *
+									(1 - this.cameraAnimationProgress) +
+								this.closeDistance * this.closeCos * this.cameraAnimationProgress;
+							this.camera.position.set(0, posY, posZ);
 							this.camera.lookAt(new Vector3());
 						},
 						ease: 'power2.inOut'
@@ -323,12 +352,15 @@ export class ThreeJsApp extends EventDispatcher implements IBase {
 						this.closeDistance * this.closeSin,
 						this.closeDistance * this.closeCos
 					);
+					this.camera.lookAt(this.closeLookAtPosition);
+					this.cameraAnimationProgress = 1;
 					break;
 				default:
 					this.camera.position.z = this.baseDistance * this.baseCos;
 					this.camera.position.y = this.baseDistance * this.baseSin;
+					this.camera.lookAt(new Vector3(0, 0, 0));
+					this.cameraAnimationProgress = 0;
 			}
-			this.camera.lookAt(new Vector3());
 		}
 	}
 
@@ -379,12 +411,15 @@ export class ThreeJsApp extends EventDispatcher implements IBase {
 	}
 
 	private resetCamera() {
-		const targetPos = new Vector4(50, 0, 50, 1);
+		const targetPos = new Vector4(50, 0, 1);
 		let baseDis = this.baseDistance;
 		let baseDis2 = this.baseDistance;
-		let targetWindowPosX = 0.6;
+		const { canvasWidth, canvasHeight } = WindowManager.GET_SIZE();
+		const scale = Math.min(Math.max(1 + Math.log2(canvasHeight / canvasWidth), 0), 2);
+		let targetWindowPosX = scale * 0.2 + 0.4;
+		// 0.4 - 0.8
 
-		for (let ii = 0; ii < 10; ii = ii + 1) {
+		for (let ii = 0; ii < 3; ii = ii + 1) {
 			this.camera.position.z = baseDis * this.baseCos;
 			this.camera.position.y = baseDis * this.baseSin;
 			this.camera.lookAt(new Vector3(0, 0, 0));
@@ -417,8 +452,10 @@ export class ThreeJsApp extends EventDispatcher implements IBase {
 		this.baseDistance = baseDis;
 
 		const targetPos2 = new Vector4(10, 0, 0, 1);
-		targetWindowPosX = 0.3;
-		for (let ii = 0; ii < 10; ii = ii + 1) {
+		// targetWindowPosX = 0.3;
+		targetWindowPosX = scale * 0.25 + 0.25;
+
+		for (let ii = 0; ii < 3; ii = ii + 1) {
 			this.camera.position.z = this.closeDistance * this.closeCos;
 			this.camera.position.y = this.closeDistance * this.closeSin;
 			this.camera.lookAt(new Vector3(0, 0, 0));
@@ -443,15 +480,17 @@ export class ThreeJsApp extends EventDispatcher implements IBase {
 			this.closeDistance = this.closeDistance + moveDis;
 		}
 
+		this.closeLookAtPosition.set(0, this.closeDistance * this.baseSin * 0.1 * (1 - scale), 0);
+
 		if (this.glAppModel.scene === SCENE.RULE) {
-			this.camera.position.z = this.closeDistance * this.baseCos;
-			this.camera.position.y = this.closeDistance * this.baseSin;
+			this.camera.position.z = this.closeDistance * this.closeCos;
+			this.camera.position.y = this.closeDistance * this.closeSin;
+			this.camera.lookAt(this.closeLookAtPosition);
 		} else {
 			this.camera.position.z = this.baseDistance * this.baseCos;
 			this.camera.position.y = this.baseDistance * this.baseSin;
+			this.camera.lookAt(new Vector3(0, 0, 0));
 		}
-
-		this.camera.lookAt(new Vector3(0, 0, 0));
 	}
 
 	private createAgents() {
