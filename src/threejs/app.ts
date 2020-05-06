@@ -361,7 +361,7 @@ export class ThreeJsApp extends EventDispatcher implements IBase {
 						break;
 					} else if (rate > midRate) {
 						low = mid + 1;
-					} else if (rate < mid) {
+					} else {
 						high = mid - 1;
 					}
 				}
